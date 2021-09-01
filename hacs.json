@@ -1,10 +1,8 @@
 {
-    "name": "Integration blueprint",
-    "hacs": "1.6.0",
+    "name": "ha-kamstrup_403",
+    "hacs": "1.0.0",
     "domains": [
-        "binary_sensor",
         "sensor",
-        "switch"
     ],
     "homeassistant": "0.118.0"
 }

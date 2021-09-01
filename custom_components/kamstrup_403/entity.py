@@ -1,10 +1,10 @@
-"""BlueprintEntity class"""
+"""KamstrupEntity class"""
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN, NAME, VERSION, ATTRIBUTION
+from .const import DOMAIN, NAME, ATTRIBUTION, MANUFACTURER, MODEL, CONF_PORT
 
 
-class IntegrationBlueprintEntity(CoordinatorEntity):
+class KamstrupEntity(CoordinatorEntity):
     def __init__(self, coordinator, config_entry):
         super().__init__(coordinator)
         self.config_entry = config_entry
@@ -12,15 +12,15 @@ class IntegrationBlueprintEntity(CoordinatorEntity):
     @property
     def unique_id(self):
         """Return a unique ID to use for this entity."""
-        return self.config_entry.entry_id
+        return f"{self.config_entry.entry_id}-{self.name}"
 
     @property
     def device_info(self):
         return {
-            "identifiers": {(DOMAIN, self.unique_id)},
+            "identifiers": {(DOMAIN, self.config_entry.data.get(CONF_PORT))},
             "name": NAME,
-            "model": VERSION,
-            "manufacturer": NAME,
+            "model": MODEL,
+            "manufacturer": MANUFACTURER,
         }
 
     @property

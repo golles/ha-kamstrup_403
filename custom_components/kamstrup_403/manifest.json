@@ -1,0 +1,15 @@
+{
+  "domain": "kamstrup_403",
+  "name": "Kamstrup 403",
+  "documentation": "https://github.com/golles/ha-kamstrup_403",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/golles/ha-kamstrup_403/issues",
+  "version": "1.0.0",
+  "config_flow": true,
+  "codeowners": [
+    "@golles"
+  ],
+  "requirements": [
+    "pyserial"
+  ]
+}

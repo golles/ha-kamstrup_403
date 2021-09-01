@@ -1,8 +1,8 @@
 """
-Custom integration to integrate integration_blueprint with Home Assistant.
+Custom integration to integrate kamstrup_403 with Home Assistant.
 
 For more details about this integration, please refer to
-https://github.com/custom-components/integration_blueprint
+https://github.com/custom-components/kamstrup_403
 """
 import asyncio
 from datetime import timedelta
@@ -14,17 +14,18 @@ from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .api import IntegrationBlueprintApiClient
+from .kamstrup import Kamstrup
 
 from .const import (
-    CONF_PASSWORD,
-    CONF_USERNAME,
+    CONF_PORT,
+    DEFAULT_BAUDRATE,
+    DEFAULT_TIMEOUT,
     DOMAIN,
     PLATFORMS,
-    STARTUP_MESSAGE,
+    SENSORS,
 )
 
-SCAN_INTERVAL = timedelta(seconds=30)
+SCAN_INTERVAL = timedelta(seconds=60)
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -38,15 +39,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up this integration using UI."""
     if hass.data.get(DOMAIN) is None:
         hass.data.setdefault(DOMAIN, {})
-        _LOGGER.info(STARTUP_MESSAGE)
 
-    username = entry.data.get(CONF_USERNAME)
-    password = entry.data.get(CONF_PASSWORD)
+    port = entry.data.get(CONF_PORT)
+    client = Kamstrup(port, DEFAULT_BAUDRATE, DEFAULT_TIMEOUT)
 
-    session = async_get_clientsession(hass)
-    client = IntegrationBlueprintApiClient(username, password, session)
-
-    coordinator = BlueprintDataUpdateCoordinator(hass, client=client)
+    coordinator = KamstrupUpdateCoordinator(hass, client=client)
     await coordinator.async_refresh()
 
     if not coordinator.last_update_success:
@@ -65,24 +62,28 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     return True
 
 
-class BlueprintDataUpdateCoordinator(DataUpdateCoordinator):
-    """Class to manage fetching data from the API."""
+class KamstrupUpdateCoordinator(DataUpdateCoordinator):
+    """Class to manage fetching data from the Kamstrup serial reader."""
 
-    def __init__(
-        self, hass: HomeAssistant, client: IntegrationBlueprintApiClient
-    ) -> None:
+    def __init__(self, hass: HomeAssistant, client: Kamstrup) -> None:
         """Initialize."""
-        self.api = client
+        self.kamstrup = client
         self.platforms = []
 
         super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=SCAN_INTERVAL)
 
     async def _async_update_data(self):
         """Update data via library."""
-        try:
-            return await self.api.async_get_data()
-        except Exception as exception:
-            raise UpdateFailed() from exception
+        _LOGGER.debug('KamstrupUpdateCoordinator: _async_update_data start')
+
+        data = {}
+        for key in SENSORS:
+            try:
+                value, unit = self.kamstrup.readvar(SENSORS[key]["command"])
+                data[SENSORS[key]["command"]] = {"value": value, "unit": unit}
+            except (serial.SerialException):
+                _LOGGER.error('Device disconnected or multiple access on port?')
+        return data
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

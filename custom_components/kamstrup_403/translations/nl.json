@@ -1,0 +1,28 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Kamstrup meter",
+                "description": "Voer de seriële poort in die op de meter is aangesloten",
+                "data": {
+                    "port": "Seriële poort"
+                }
+            }
+        },
+        "error": {
+            "port": "Kan geen verbinding maken met de opgegeven poort."
+        },
+        "abort": {
+            "single_instance_allowed": "Slechts één instantie is toegestaan."
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "data": {
+                    "sensor": "Sensor ingeschakeld"
+                }
+            }
+        }
+    }
+}
