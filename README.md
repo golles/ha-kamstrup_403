@@ -11,15 +11,11 @@
 [![Discord][discord-shield]][discord]
 [![Community Forum][forum-shield]][forum]
 
-_Component to integrate with [kamstrup_403][kamstrup_403]._
-
 **This component will set up the following platforms.**
 
 Platform | Description
 -- | --
 `sensor` | Show info from the meter.
-
-![example][exampleimg]
 
 ## Installation
 
