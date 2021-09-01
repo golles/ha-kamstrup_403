@@ -1,8 +1,8 @@
 {
-    "name": "ha-kamstrup_403",
+    "name": "Kamstrup 403",
     "hacs": "1.0.0",
     "domains": [
-        "sensor",
+        "sensor"
     ],
     "homeassistant": "0.118.0"
 }
