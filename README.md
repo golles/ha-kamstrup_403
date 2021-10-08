@@ -17,6 +17,13 @@ Platform | Description
 -- | --
 `sensor` | Show info from the meter.
 
+## Requirements
+
+To use this component, you'll need a cable with an IR read/write head and connect your machine running Home Assistant directly to the IR sensor of the Kamstrup meter.
+For me, this USB-cable from [Ebay](https://www.ebay.nl/itm/USB-IR-Infrarot-Lese-Schreibkopf-f%C3%BCr-Stromz%C3%A4hler-Smart-Meter/274095213723) worked perfectly. The one from [Volkszaehler.org](https://wiki.volkszaehler.org/hardware/controllers/ir-schreib-lesekopf) seems to work fine as well, but might be harder to get.
+![cable](https://user-images.githubusercontent.com/2211503/136630069-9da49f09-6f9c-4618-8255-40195405f21a.jpg)
+
+
 ## Installation
 
 1. Using the tool of choice open the directory (folder) for your HA configuration (where you find `configuration.yaml`).
@@ -43,7 +50,8 @@ custom_components/kamstrup_403/sensor.py
 
 ## Configuration is done in the UI
 
-<!---->
+It's recommended to use devices as `/dev/serial/by-id` and not `/dev/ttyUSB1` as the port, as the first one should be stable, while the second one can change when you add/remove usb (serial) adapters, or even when you perform a system reboot.  
+The port will become something like: `/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_D307PBVY-if00-port0`.
 
 ## Contributions are welcome!
 
