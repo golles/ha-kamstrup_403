@@ -28,7 +28,8 @@ Platform | Description
 
 ## Configuration is done in the UI
 
-<!---->
+It's recommended to use devices as `/dev/serial/by-id` and not `/dev/ttyUSB1` as the port, as the first one should be stable, while the second one can change when you add/remove usb (serial) adapters, or even when you perform a system reboot.  
+The port will become something like: `/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_D307PBVY-if00-port0`.
 
 ***
 
