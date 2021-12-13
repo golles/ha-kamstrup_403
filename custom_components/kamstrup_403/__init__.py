@@ -7,6 +7,7 @@ https://github.com/custom-components/kamstrup_403
 import asyncio
 from datetime import timedelta
 import logging
+import serial
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import Config, HomeAssistant

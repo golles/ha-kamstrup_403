@@ -1,6 +1,6 @@
 {
     "name": "Kamstrup 403",
-    "hacs": "1.0.0",
+    "hacs": "1.1.0",
     "domains": [
         "sensor"
     ],
