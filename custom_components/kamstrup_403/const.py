@@ -28,12 +28,13 @@ SENSORS = {
         "icon": "mdi:radiator",
         "command": 60,
         "device_class": DEVICE_CLASS_ENERGY,
-        "attributes": [
-            {
-                "name": "state_class",
-                "value": TOTAL_INCREASING,
-            },
-        ],
+        # has unit GJ which is unsupported for device_class energy
+        # "attributes": [
+        #     {
+        #         "name": "state_class",
+        #         "value": TOTAL_INCREASING,
+        #     },
+        # ],
     },
     0x0050: {
         "name": "Power",
@@ -272,24 +273,26 @@ SENSORS = {
         "icon": "mdi:thermometer",
         "command": 97,
         "device_class": DEVICE_CLASS_TEMPERATURE,
-        "attributes": [
-            {
-                "name": "state_class",
-                "value": MEASUREMENT,
-            },
-        ],
+        # has unit m3xC which is unsupported for device_class temperature
+        # "attributes": [
+        #     {
+        #         "name": "state_class",
+        #         "value": MEASUREMENT,
+        #     },
+        # ],
     },
     0x006E: {
         "name": "Temp2xm3",
         "icon": "mdi:thermometer",
         "command": 110,
         "device_class": DEVICE_CLASS_TEMPERATURE,
-        "attributes": [
-            {
-                "name": "state_class",
-                "value": MEASUREMENT,
-            },
-        ],
+        # has unit m3xC which is unsupported for device_class temperature
+        # "attributes": [
+        #     {
+        #         "name": "state_class",
+        #         "value": MEASUREMENT,
+        #     },
+        # ],
     },
     0x0071: {
         "name": "Infoevent",
