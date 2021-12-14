@@ -78,6 +78,10 @@ class KamstrupSensor(KamstrupEntity):
         return self._device_class
 
     @property
-    def state_class(self):
-        """Return the state class."""
-        return self._state_class
+    def extra_state_attributes(self):
+        """Return the device state attributes."""
+        attributes = super().extra_state_attributes
+        for attribute in self._attributes:
+            attributes[attribute.get("name", None)] = attribute.get("value", None)
+
+        return attributes

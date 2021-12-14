@@ -28,7 +28,12 @@ SENSORS = {
         "icon": "mdi:radiator",
         "command": 60,
         "device_class": DEVICE_CLASS_ENERGY,
-        "state_class": TOTAL_INCREASING,
+        "attributes": [
+            {
+                "name": "state_class",
+                "value": TOTAL_INCREASING,
+            },
+        ],
     },
     0x0050: {
         "name": "Power",
@@ -36,51 +41,92 @@ SENSORS = {
         "command": 80,
         "device_class": DEVICE_CLASS_POWER,
         "state_class": MEASUREMENT,
+        "attributes": [
+            {
+                "name": "state_class",
+                "value": MEASUREMENT,
+            },
+        ],
     },
     0x0056: {
         "name": "Temp1",
         "icon": "mdi:thermometer",
         "command": 86,
         "device_class": DEVICE_CLASS_TEMPERATURE,
-        "state_class": MEASUREMENT,
+        "attributes": [
+            {
+                "name": "state_class",
+                "value": MEASUREMENT,
+            },
+        ],
     },
     0x0057: {
         "name": "Temp2",
         "icon": "mdi:thermometer",
         "command": 87,
         "device_class": DEVICE_CLASS_TEMPERATURE,
-        "state_class": MEASUREMENT,
+        "attributes": [
+            {
+                "name": "state_class",
+                "value": MEASUREMENT,
+            },
+        ],
     },
     0x0059: {
         "name": "Tempdiff",
         "icon": "mdi:thermometer",
         "command": 89,
         "device_class": DEVICE_CLASS_TEMPERATURE,
-        "state_class": MEASUREMENT,
+        "attributes": [
+            {
+                "name": "state_class",
+                "value": MEASUREMENT,
+            },
+        ],
     },
     0x004A: {
         "name": "Flow",
         "icon": "mdi:water",
         "command": 74,
-        "state_class": MEASUREMENT,
+        "attributes": [
+            {
+                "name": "state_class",
+                "value": MEASUREMENT,
+            },
+        ],
     },
     0x0044: {
         "name": "Volume",
         "icon": "mdi:water",
         "command": 68,
-        "state_class": TOTAL_INCREASING,
+        "attributes": [
+            {
+                "name": "state_class",
+                "value": TOTAL_INCREASING,
+            },
+        ],
     },
     # 0x008D: {
     #     "name": "MinFlow_M",
     #     "icon": "mdi:water",
     #     "command": 141,
-    #     "state_class": MEASUREMENT,
+    #     "attributes": [
+    #         {
+    #             "name": "state_class",
+    #             "value": MEASUREMENT,
+    #         },
+    #     ],
     # },
     # 0x008B: {
     #     "name": "MaxFlow_M",
     #     "icon": "mdi:water",
     #     "command": 139,
-    #     "state_class": MEASUREMENT,
+    #     "attributes": [
+    #         {
+    #             "name": "state_class",
+    #             "value": MEASUREMENT,
+    #         },
+    #     ],
     # },
     # 0x008C: {
     #     "name": "MinFlowDate_M",
@@ -97,28 +143,48 @@ SENSORS = {
     #     "icon": "mdi:flash",
     #     "command": 145,
     #     "device_class": DEVICE_CLASS_POWER,
-    #     "state_class": MEASUREMENT,
+    #     "attributes": [
+    #         {
+    #             "name": "state_class",
+    #             "value": MEASUREMENT,
+    #         },
+    #     ],
     # },
     # 0x008F: {
     #     "name": "MaxPower_M",
     #     "icon": "mdi:flash",
     #     "command": 143,
     #     "device_class": DEVICE_CLASS_POWER,
-    #     "state_class": MEASUREMENT,
+    #     "attributes": [
+    #         {
+    #             "name": "state_class",
+    #             "value": MEASUREMENT,
+    #         },
+    #     ],
     # },
     # 0x0095: {
     #     "name": "AvgTemp1_M",
     #     "icon": "mdi:thermometer",
     #     "command": 149,
     #     "device_class": DEVICE_CLASS_TEMPERATURE,
-    #     "state_class": MEASUREMENT,
+    #     "attributes": [
+    #         {
+    #             "name": "state_class",
+    #             "value": MEASUREMENT,
+    #         },
+    #     ],
     # },
     # 0x0096: {
     #     "name": "AvgTemp2_M",
     #     "icon": "mdi:thermometer",
     #     "command": 150,
     #     "device_class": DEVICE_CLASS_TEMPERATURE,
-    #     "state_class": MEASUREMENT,
+    #     "attributes": [
+    #         {
+    #             "name": "state_class",
+    #             "value": MEASUREMENT,
+    #         },
+    #     ],
     # },
     # 0x0090: {
     #     "name": "MinPowerDate_M",
@@ -135,7 +201,12 @@ SENSORS = {
     #     "icon": "mdi:water",
     #     "command": 126,
     #     "device_class": DEVICE_CLASS_TEMPERATURE,
-    #     "state_class": MEASUREMENT,
+    #     "attributes": [
+    #         {
+    #             "name": "state_class",
+    #             "value": MEASUREMENT,
+    #         },
+    #     ],
     # },
     # 0x007C: {
     #     "name": "MaxFlow_Y",
@@ -167,14 +238,24 @@ SENSORS = {
     #     "icon": "mdi:thermometer",
     #     "command": 146,
     #     "device_class": DEVICE_CLASS_TEMPERATURE,
-    #     "state_class": MEASUREMENT,
+    #     "attributes": [
+    #         {
+    #             "name": "state_class",
+    #             "value": MEASUREMENT,
+    #         },
+    #     ],
     # },
     # 0x0093: {
     #     "name": "AvgTemp2_Y",
     #     "icon": "mdi:thermometer",
     #     "command": 147,
     #     "device_class": DEVICE_CLASS_TEMPERATURE,
-    #     "state_class": MEASUREMENT,
+    #     "attributes": [
+    #         {
+    #             "name": "state_class",
+    #             "value": MEASUREMENT,
+    #         },
+    #     ],
     # },
     # 0x0081: {
     #     "name": "MinPowerDate_Y",
@@ -191,14 +272,24 @@ SENSORS = {
         "icon": "mdi:thermometer",
         "command": 97,
         "device_class": DEVICE_CLASS_TEMPERATURE,
-        "state_class": MEASUREMENT,
+        "attributes": [
+            {
+                "name": "state_class",
+                "value": MEASUREMENT,
+            },
+        ],
     },
     0x006E: {
         "name": "Temp2xm3",
         "icon": "mdi:thermometer",
         "command": 110,
         "device_class": DEVICE_CLASS_TEMPERATURE,
-        "state_class": MEASUREMENT,
+        "attributes": [
+            {
+                "name": "state_class",
+                "value": MEASUREMENT,
+            },
+        ],
     },
     0x0071: {
         "name": "Infoevent",
@@ -210,7 +301,12 @@ SENSORS = {
         "icon": "mdi:timer-sand",
         "command": 1004,
         "state_class": MEASUREMENT,
-        "state_class": TOTAL_INCREASING,
+        "attributes": [
+            {
+                "name": "state_class",
+                "value": TOTAL_INCREASING,
+            },
+        ],
     },
 }
 
