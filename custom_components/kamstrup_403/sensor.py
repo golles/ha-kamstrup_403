@@ -24,7 +24,7 @@ async def async_setup_entry(hass, entry, async_add_devices):
                     SENSORS[key].get("name", None),
                     SENSORS[key].get("icon", None),
                     SENSORS[key].get("device_class", None),
-                    SENSORS[key].get("state_class", None),
+                    SENSORS[key].get("attributes", []),
                     SENSORS[key].get("command", None),
                 )
             ]
@@ -41,7 +41,7 @@ class KamstrupSensor(KamstrupEntity):
         name,
         icon,
         device_class,
-        state_class,
+        attributes,
         command,
     ):
         super().__init__(coordinator, config_entry)
@@ -49,7 +49,7 @@ class KamstrupSensor(KamstrupEntity):
         self._name = "{} {} {}".format(MANUFACTURER, MODEL, name)
         self._icon = icon
         self._device_class = device_class
-        self._state_class = state_class
+        self._attributes = attributes
         self._command = command
 
     @property
