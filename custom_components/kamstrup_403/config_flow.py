@@ -52,6 +52,10 @@ class KamstrupFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
             return await self._show_config_form(user_input)
 
+        user_input = {}
+        # Provide defaults for form
+        user_input[CONF_PORT] = ""
+
         return await self._show_config_form(user_input)
 
     @staticmethod
@@ -65,7 +69,7 @@ class KamstrupFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_PORT): str,
+                    vol.Required(CONF_PORT, default=user_input[CONF_PORT]): str,
                 }
             ),
             errors=self._errors,
