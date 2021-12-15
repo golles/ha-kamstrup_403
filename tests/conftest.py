@@ -55,7 +55,8 @@ def bypass_get_data_fixture():
 @pytest.fixture(name="error_on_get_data")
 def error_get_data_fixture():
     """Simulate error when retrieving data from API."""
-    with patch("serial.Serial",
+    with patch(
+        "serial.Serial",
         side_effect=serial.SerialException,
     ):
         yield
