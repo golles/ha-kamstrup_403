@@ -1,12 +1,12 @@
 """Adds config flow for Kamstrup 403."""
 from homeassistant import config_entries
+from homeassistant.const import CONF_PORT
 from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 import voluptuous as vol
 import serial
 
 from .const import (
-    CONF_PORT,
     DEFAULT_BAUDRATE,
     DEFAULT_TIMEOUT,
     DOMAIN,

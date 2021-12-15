@@ -17,8 +17,16 @@
 from unittest.mock import patch
 
 import pytest
+import serial
 
 pytest_plugins = "pytest_homeassistant_custom_component"
+
+
+# This fixture enables loading custom integrations in all tests.
+# Remove to enable selective use of this fixture
+@pytest.fixture(autouse=True)
+def auto_enable_custom_integrations(enable_custom_integrations):
+    yield
 
 
 # This fixture is used to prevent HomeAssistant from attempting to create and dismiss persistent
@@ -38,7 +46,7 @@ def skip_notifications_fixture():
 @pytest.fixture(name="bypass_get_data")
 def bypass_get_data_fixture():
     """Skip calls to get data from API."""
-    with patch("custom_components.kamstrup_403.Kamstrup.readvar"):
+    with patch("serial.Serial"):
         yield
 
 
@@ -47,8 +55,7 @@ def bypass_get_data_fixture():
 @pytest.fixture(name="error_on_get_data")
 def error_get_data_fixture():
     """Simulate error when retrieving data from API."""
-    with patch(
-        "custom_components.kamstrup_403.Kamstrup.readvar",
-        side_effect=Exception,
+    with patch("serial.Serial",
+        side_effect=serial.SerialException,
     ):
         yield

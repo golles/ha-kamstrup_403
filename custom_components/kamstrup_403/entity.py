@@ -1,7 +1,8 @@
 """KamstrupEntity class"""
+from homeassistant.const import CONF_PORT
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN, NAME, ATTRIBUTION, MANUFACTURER, MODEL, CONF_PORT
+from .const import DOMAIN, NAME, ATTRIBUTION, MANUFACTURER, MODEL
 
 
 class KamstrupEntity(CoordinatorEntity):

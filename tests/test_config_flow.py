@@ -2,6 +2,7 @@
 from unittest.mock import patch
 
 from homeassistant import config_entries, data_entry_flow
+from homeassistant.const import CONF_PORT
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -13,14 +14,16 @@ from custom_components.kamstrup_403.const import (
 
 from .const import MOCK_CONFIG
 
-
 # This fixture bypasses the actual setup of the integration
 # since we only want to test the config flow. We test the
 # actual functionality of the integration in other test modules.
 @pytest.fixture(autouse=True)
 def bypass_setup_fixture():
     """Prevent setup."""
-    with patch("custom_components.kamstrup_403.async_setup", return_value=True,), patch(
+    with patch(
+        "custom_components.kamstrup_403.async_setup",
+        return_value=True,
+    ), patch(
         "custom_components.kamstrup_403.async_setup_entry",
         return_value=True,
     ):
@@ -41,6 +44,18 @@ async def test_successful_config_flow(hass, bypass_get_data):
     assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
     assert result["step_id"] == "user"
 
+    # If a user were to fill in all fields, it would result in this function call
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], user_input=MOCK_CONFIG
+    )
+
+    # Check that the config flow is complete and a new entry is created with
+    # the input data
+    assert result["type"] == data_entry_flow.RESULT_TYPE_CREATE_ENTRY
+    assert result["title"] == MOCK_CONFIG[CONF_PORT]
+    assert result["data"] == MOCK_CONFIG
+    assert result["result"]
+
 
 # In this case, we want to simulate a failure during the config flow.
 # We use the `error_on_get_data` mock instead of `bypass_get_data`
@@ -56,13 +71,11 @@ async def test_failed_config_flow(hass, error_on_get_data):
     assert result["step_id"] == "user"
 
     result = await hass.config_entries.flow.async_configure(
-        result["flow_id"], user_input=MOCK_CONFIG
+        result["flow_id"], user_input={}
     )
 
-    # TODO decide if this test is useful, the flow can't fail at this moment
-    # There is only 1 item which needs to be filled.
-    # assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
-    # assert result["errors"] == {"base": "port"}
+    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
+    assert result["errors"] == {"base": "port"}
 
 
 # Our config flow also has an options flow, so we must test it as well.
@@ -89,3 +102,6 @@ async def test_options_flow(hass):
     # Verify that the flow finishes
     assert result["type"] == data_entry_flow.RESULT_TYPE_CREATE_ENTRY
     assert result["title"] == "/dev/ttyUSB0"
+
+    # Verify that the options were updated
+    assert entry.options == {SENSOR: False}

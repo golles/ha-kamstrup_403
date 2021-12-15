@@ -10,6 +10,7 @@ import logging
 import serial
 
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_PORT
 from homeassistant.core import Config, HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -18,7 +19,6 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from .kamstrup import Kamstrup
 
 from .const import (
-    CONF_PORT,
     DEFAULT_BAUDRATE,
     DEFAULT_TIMEOUT,
     DOMAIN,

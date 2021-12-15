@@ -313,9 +313,6 @@ SENSORS = {
     },
 }
 
-# Configuration and options
-CONF_PORT = "port"
-
 # Defaults
 DEFAULT_BAUDRATE = 1200
 DEFAULT_TIMEOUT = 2.0
