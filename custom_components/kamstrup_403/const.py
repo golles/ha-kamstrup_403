@@ -5,9 +5,12 @@ from homeassistant.const import (
     DEVICE_CLASS_POWER,
     DEVICE_CLASS_TEMPERATURE,
 )
+from homeassistant.components.sensor import (
+    STATE_CLASS_MEASUREMENT,
+    ATTR_STATE_CLASS,
+)
 
 # Todo, import next two from: homeassistant.sensor import SensorStateClass
-MEASUREMENT = "measurement"
 TOTAL_INCREASING = "total_increasing"
 
 # Base component constants
@@ -31,7 +34,7 @@ SENSORS = {
         # has unit GJ which is unsupported for device_class energy
         # "attributes": [
         #     {
-        #         "name": "state_class",
+        #         "name": ATTR_STATE_CLASS,
         #         "value": TOTAL_INCREASING,
         #     },
         # ],
@@ -41,11 +44,11 @@ SENSORS = {
         "icon": "mdi:flash",
         "command": 80,
         "device_class": DEVICE_CLASS_POWER,
-        "state_class": MEASUREMENT,
+        "state_class": STATE_CLASS_MEASUREMENT,
         "attributes": [
             {
-                "name": "state_class",
-                "value": MEASUREMENT,
+                "name": ATTR_STATE_CLASS,
+                "value": STATE_CLASS_MEASUREMENT,
             },
         ],
     },
@@ -56,8 +59,8 @@ SENSORS = {
         "device_class": DEVICE_CLASS_TEMPERATURE,
         "attributes": [
             {
-                "name": "state_class",
-                "value": MEASUREMENT,
+                "name": ATTR_STATE_CLASS,
+                "value": STATE_CLASS_MEASUREMENT,
             },
         ],
     },
@@ -68,8 +71,8 @@ SENSORS = {
         "device_class": DEVICE_CLASS_TEMPERATURE,
         "attributes": [
             {
-                "name": "state_class",
-                "value": MEASUREMENT,
+                "name": ATTR_STATE_CLASS,
+                "value": STATE_CLASS_MEASUREMENT,
             },
         ],
     },
@@ -80,8 +83,8 @@ SENSORS = {
         "device_class": DEVICE_CLASS_TEMPERATURE,
         "attributes": [
             {
-                "name": "state_class",
-                "value": MEASUREMENT,
+                "name": ATTR_STATE_CLASS,
+                "value": STATE_CLASS_MEASUREMENT,
             },
         ],
     },
@@ -91,8 +94,8 @@ SENSORS = {
         "command": 74,
         "attributes": [
             {
-                "name": "state_class",
-                "value": MEASUREMENT,
+                "name": ATTR_STATE_CLASS,
+                "value": STATE_CLASS_MEASUREMENT,
             },
         ],
     },
@@ -102,7 +105,7 @@ SENSORS = {
         "command": 68,
         "attributes": [
             {
-                "name": "state_class",
+                "name": ATTR_STATE_CLASS,
                 "value": TOTAL_INCREASING,
             },
         ],
@@ -113,8 +116,8 @@ SENSORS = {
     #     "command": 141,
     #     "attributes": [
     #         {
-    #             "name": "state_class",
-    #             "value": MEASUREMENT,
+    #             "name": ATTR_STATE_CLASS,
+    #             "value": STATE_CLASS_MEASUREMENT,
     #         },
     #     ],
     # },
@@ -124,8 +127,8 @@ SENSORS = {
     #     "command": 139,
     #     "attributes": [
     #         {
-    #             "name": "state_class",
-    #             "value": MEASUREMENT,
+    #             "name": ATTR_STATE_CLASS,
+    #             "value": STATE_CLASS_MEASUREMENT,
     #         },
     #     ],
     # },
@@ -146,8 +149,8 @@ SENSORS = {
     #     "device_class": DEVICE_CLASS_POWER,
     #     "attributes": [
     #         {
-    #             "name": "state_class",
-    #             "value": MEASUREMENT,
+    #             "name": ATTR_STATE_CLASS,
+    #             "value": STATE_CLASS_MEASUREMENT,
     #         },
     #     ],
     # },
@@ -158,8 +161,8 @@ SENSORS = {
     #     "device_class": DEVICE_CLASS_POWER,
     #     "attributes": [
     #         {
-    #             "name": "state_class",
-    #             "value": MEASUREMENT,
+    #             "name": ATTR_STATE_CLASS,
+    #             "value": STATE_CLASS_MEASUREMENT,
     #         },
     #     ],
     # },
@@ -170,8 +173,8 @@ SENSORS = {
     #     "device_class": DEVICE_CLASS_TEMPERATURE,
     #     "attributes": [
     #         {
-    #             "name": "state_class",
-    #             "value": MEASUREMENT,
+    #             "name": ATTR_STATE_CLASS,
+    #             "value": STATE_CLASS_MEASUREMENT,
     #         },
     #     ],
     # },
@@ -182,8 +185,8 @@ SENSORS = {
     #     "device_class": DEVICE_CLASS_TEMPERATURE,
     #     "attributes": [
     #         {
-    #             "name": "state_class",
-    #             "value": MEASUREMENT,
+    #             "name": ATTR_STATE_CLASS,
+    #             "value": STATE_CLASS_MEASUREMENT,
     #         },
     #     ],
     # },
@@ -204,8 +207,8 @@ SENSORS = {
     #     "device_class": DEVICE_CLASS_TEMPERATURE,
     #     "attributes": [
     #         {
-    #             "name": "state_class",
-    #             "value": MEASUREMENT,
+    #             "name": ATTR_STATE_CLASS,
+    #             "value": STATE_CLASS_MEASUREMENT,
     #         },
     #     ],
     # },
@@ -241,8 +244,8 @@ SENSORS = {
     #     "device_class": DEVICE_CLASS_TEMPERATURE,
     #     "attributes": [
     #         {
-    #             "name": "state_class",
-    #             "value": MEASUREMENT,
+    #             "name": ATTR_STATE_CLASS,
+    #             "value": STATE_CLASS_MEASUREMENT,
     #         },
     #     ],
     # },
@@ -253,8 +256,8 @@ SENSORS = {
     #     "device_class": DEVICE_CLASS_TEMPERATURE,
     #     "attributes": [
     #         {
-    #             "name": "state_class",
-    #             "value": MEASUREMENT,
+    #             "name": ATTR_STATE_CLASS,
+    #             "value": STATE_CLASS_MEASUREMENT,
     #         },
     #     ],
     # },
@@ -276,8 +279,8 @@ SENSORS = {
         # has unit m3xC which is unsupported for device_class temperature
         # "attributes": [
         #     {
-        #         "name": "state_class",
-        #         "value": MEASUREMENT,
+        #         "name": ATTR_STATE_CLASS,
+        #         "value": STATE_CLASS_MEASUREMENT,
         #     },
         # ],
     },
@@ -289,8 +292,8 @@ SENSORS = {
         # has unit m3xC which is unsupported for device_class temperature
         # "attributes": [
         #     {
-        #         "name": "state_class",
-        #         "value": MEASUREMENT,
+        #         "name": ATTR_STATE_CLASS,
+        #         "value": STATE_CLASS_MEASUREMENT,
         #     },
         # ],
     },
@@ -303,10 +306,10 @@ SENSORS = {
         "name": "HourCounter",
         "icon": "mdi:timer-sand",
         "command": 1004,
-        "state_class": MEASUREMENT,
+        "state_class": STATE_CLASS_MEASUREMENT,
         "attributes": [
             {
-                "name": "state_class",
+                "name": ATTR_STATE_CLASS,
                 "value": TOTAL_INCREASING,
             },
         ],
