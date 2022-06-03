@@ -1,4 +1,6 @@
 """Sensor platform for kamstrup_403."""
+from homeassistant.components.sensor import SensorEntity
+
 from .const import DOMAIN, SENSOR, SENSORS, MANUFACTURER, MODEL
 from .entity import KamstrupEntity
 
@@ -31,7 +33,7 @@ async def async_setup_entry(hass, entry, async_add_devices):
         )
 
 
-class KamstrupSensor(KamstrupEntity):
+class KamstrupSensor(KamstrupEntity, SensorEntity):
     """Kamstrup Sensor class."""
 
     def __init__(
@@ -58,12 +60,12 @@ class KamstrupSensor(KamstrupEntity):
         return self._name
 
     @property
-    def state(self):
-        """Return the state of the sensor."""
+    def native_value(self):
+        """Return the native_value of the sensor."""
         return self.coordinator.data[self._command].get("value")
 
     @property
-    def unit_of_measurement(self):
+    def native_unit_of_measurement(self):
         """Return the unit of measurement of this entity, if any."""
         return self.coordinator.data[self._command].get("unit")
 
