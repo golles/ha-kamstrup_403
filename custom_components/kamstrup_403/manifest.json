@@ -10,6 +10,6 @@
     "@golles"
   ],
   "requirements": [
-    "pyserial"
+    "pyserial==3.5"
   ]
 }

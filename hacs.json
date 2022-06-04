@@ -1,8 +1,5 @@
 {
     "name": "Kamstrup 403",
-    "hacs": "1.1.0",
-    "domains": [
-        "sensor"
-    ],
-    "homeassistant": "0.118.0"
+    "homeassistant": "2022.2.0",
+    "render_readme": true
 }
