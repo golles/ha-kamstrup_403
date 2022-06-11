@@ -6,12 +6,10 @@ from homeassistant.const import (
     DEVICE_CLASS_TEMPERATURE,
 )
 from homeassistant.components.sensor import (
-    STATE_CLASS_MEASUREMENT,
     ATTR_STATE_CLASS,
+    STATE_CLASS_MEASUREMENT,
+    SensorStateClass,
 )
-
-# Todo, import from: homeassistant.sensor import SensorStateClass
-TOTAL_INCREASING = "total_increasing"
 
 # Base component constants
 NAME = "Kamstrup 403"
@@ -40,7 +38,7 @@ SENSORS = {
         # "attributes": [
         #     {
         #         "name": ATTR_STATE_CLASS,
-        #         "value": TOTAL_INCREASING,
+        #         "value": SensorStateClass.TOTAL_INCREASING,
         #     },
         # ],
     },
@@ -111,7 +109,7 @@ SENSORS = {
         "attributes": [
             {
                 "name": ATTR_STATE_CLASS,
-                "value": TOTAL_INCREASING,
+                "value": SensorStateClass.TOTAL_INCREASING,
             },
         ],
     },
@@ -315,7 +313,7 @@ SENSORS = {
         "attributes": [
             {
                 "name": ATTR_STATE_CLASS,
-                "value": TOTAL_INCREASING,
+                "value": SensorStateClass.TOTAL_INCREASING,
             },
         ],
     },
