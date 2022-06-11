@@ -10,7 +10,7 @@ from homeassistant.components.sensor import (
     ATTR_STATE_CLASS,
 )
 
-# Todo, import next two from: homeassistant.sensor import SensorStateClass
+# Todo, import from: homeassistant.sensor import SensorStateClass
 TOTAL_INCREASING = "total_increasing"
 
 # Base component constants
@@ -19,6 +19,11 @@ DOMAIN = "kamstrup_403"
 MODEL = "403"
 MANUFACTURER = "Kamstrup"
 ATTRIBUTION = "Data provided by Kamstrup 403 meter"
+
+# Defaults
+DEFAULT_BAUDRATE = 1200
+DEFAULT_SCAN_INTERVAL = 60
+DEFAULT_TIMEOUT = 2.0
 
 # Platforms
 SENSOR = "sensor"
@@ -315,7 +320,3 @@ SENSORS = {
         ],
     },
 }
-
-# Defaults
-DEFAULT_BAUDRATE = 1200
-DEFAULT_TIMEOUT = 2.0

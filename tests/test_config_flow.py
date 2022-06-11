@@ -2,17 +2,13 @@
 from unittest.mock import patch
 
 from homeassistant import config_entries, data_entry_flow
-from homeassistant.const import CONF_PORT
+from homeassistant.const import CONF_PORT, CONF_SCAN_INTERVAL
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.kamstrup_403.const import (
-    DOMAIN,
-    PLATFORMS,
-    SENSOR,
-)
+from custom_components.kamstrup_403.const import DOMAIN, SENSOR
 
-from .const import MOCK_CONFIG
+from .const import MOCK_CONFIG, MOCK_UPDATE_CONFIG
 
 # This fixture bypasses the actual setup of the integration
 # since we only want to test the config flow. We test the
@@ -96,7 +92,7 @@ async def test_options_flow(hass):
     # Enter some fake data into the form
     result = await hass.config_entries.options.async_configure(
         result["flow_id"],
-        user_input={platform: platform != SENSOR for platform in PLATFORMS},
+        user_input=MOCK_UPDATE_CONFIG,
     )
 
     # Verify that the flow finishes
@@ -104,4 +100,4 @@ async def test_options_flow(hass):
     assert result["title"] == "/dev/ttyUSB0"
 
     # Verify that the options were updated
-    assert entry.options == {SENSOR: False}
+    assert entry.options == MOCK_UPDATE_CONFIG

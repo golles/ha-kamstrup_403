@@ -10,7 +10,7 @@ import logging
 import serial
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_PORT
+from homeassistant.const import CONF_PORT, CONF_SCAN_INTERVAL
 from homeassistant.core import Config, HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -20,13 +20,12 @@ from .kamstrup import Kamstrup
 
 from .const import (
     DEFAULT_BAUDRATE,
+    DEFAULT_SCAN_INTERVAL,
     DEFAULT_TIMEOUT,
     DOMAIN,
     PLATFORMS,
     SENSORS,
 )
-
-SCAN_INTERVAL = timedelta(seconds=60)
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -42,9 +41,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         hass.data.setdefault(DOMAIN, {})
 
     port = entry.data.get(CONF_PORT)
+    scan_interval = entry.data.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
+
     client = Kamstrup(port, DEFAULT_BAUDRATE, DEFAULT_TIMEOUT)
 
-    coordinator = KamstrupUpdateCoordinator(hass, client=client)
+    coordinator = KamstrupUpdateCoordinator(
+        hass, client=client, scan_interval=scan_interval
+    )
     await coordinator.async_refresh()
 
     if not coordinator.last_update_success:
@@ -66,16 +69,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 class KamstrupUpdateCoordinator(DataUpdateCoordinator):
     """Class to manage fetching data from the Kamstrup serial reader."""
 
-    def __init__(self, hass: HomeAssistant, client: Kamstrup) -> None:
+    def __init__(
+        self, hass: HomeAssistant, client: Kamstrup, scan_interval: int
+    ) -> None:
         """Initialize."""
         self.kamstrup = client
         self.platforms = []
 
-        super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=SCAN_INTERVAL)
+        super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=scan_interval)
 
     async def _async_update_data(self):
         """Update data via library."""
-        _LOGGER.debug('KamstrupUpdateCoordinator: _async_update_data start')
+        _LOGGER.debug("KamstrupUpdateCoordinator: _async_update_data start")
 
         data = {}
         for key in SENSORS:
@@ -83,7 +88,7 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator):
                 value, unit = self.kamstrup.readvar(SENSORS[key]["command"])
                 data[SENSORS[key]["command"]] = {"value": value, "unit": unit}
             except (serial.SerialException):
-                _LOGGER.error('Device disconnected or multiple access on port?')
+                _LOGGER.error("Device disconnected or multiple access on port?")
         return data
 
 
