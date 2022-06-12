@@ -11,11 +11,9 @@
 [![Discord][discord-shield]][discord]
 [![Community Forum][forum-shield]][forum]
 
-**This component will set up the following platforms.**
+Kamstrup 403 custom component for Home Assistant.
 
-Platform | Description
--- | --
-`sensor` | Show info from the meter.
+<img width="663" alt="info" src="https://user-images.githubusercontent.com/2211503/173236049-10647d83-9be6-49a6-a90b-671a8860c743.png">
 
 ## Requirements
 
@@ -37,6 +35,13 @@ Kamstrup MC66C | No | Supported in my [old component](https://github.com/golles/
 
 
 ## Installation
+
+### HACS
+
+This component can be installed in your Home Assistant with HACS.
+
+
+### Manual
 
 1. Using the tool of choice open the directory (folder) for your HA configuration (where you find `configuration.yaml`).
 2. If you do not have a `custom_components` directory (folder) there, you need to create it.
@@ -64,6 +69,10 @@ custom_components/kamstrup_403/sensor.py
 
 It's recommended to use devices as `/dev/serial/by-id` and not `/dev/ttyUSB1` as the port. This because the first example is a stable identifier, while the second one can change when USB devices are added or removed, or even when you perform a system reboot.  
 The port will be like: `/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_D307PBVY-if00-port0`.
+
+Some meters contain a battery, and communicating with the meter does impact battery life. By default, this component updates every 60 seconds. From version `1.2.0`, you can configure the update interval on the Integrations page:
+
+<img width="290" alt="opt1" src="https://user-images.githubusercontent.com/2211503/173235828-fd130b51-99b0-4522-b697-4d69df51925d.png"> <img width="392" alt="opt2" src="https://user-images.githubusercontent.com/2211503/173235826-ffd79769-cc2c-4404-9b79-d233aef8587e.png">
 
 ## Contributions are welcome!
 
