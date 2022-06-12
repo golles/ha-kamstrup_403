@@ -6,12 +6,10 @@ from homeassistant.const import (
     DEVICE_CLASS_TEMPERATURE,
 )
 from homeassistant.components.sensor import (
-    STATE_CLASS_MEASUREMENT,
     ATTR_STATE_CLASS,
+    STATE_CLASS_MEASUREMENT,
+    SensorStateClass,
 )
-
-# Todo, import next two from: homeassistant.sensor import SensorStateClass
-TOTAL_INCREASING = "total_increasing"
 
 # Base component constants
 NAME = "Kamstrup 403"
@@ -19,6 +17,11 @@ DOMAIN = "kamstrup_403"
 MODEL = "403"
 MANUFACTURER = "Kamstrup"
 ATTRIBUTION = "Data provided by Kamstrup 403 meter"
+
+# Defaults
+DEFAULT_BAUDRATE = 1200
+DEFAULT_SCAN_INTERVAL = 60
+DEFAULT_TIMEOUT = 2.0
 
 # Platforms
 SENSOR = "sensor"
@@ -35,7 +38,7 @@ SENSORS = {
         # "attributes": [
         #     {
         #         "name": ATTR_STATE_CLASS,
-        #         "value": TOTAL_INCREASING,
+        #         "value": SensorStateClass.TOTAL_INCREASING,
         #     },
         # ],
     },
@@ -106,7 +109,7 @@ SENSORS = {
         "attributes": [
             {
                 "name": ATTR_STATE_CLASS,
-                "value": TOTAL_INCREASING,
+                "value": SensorStateClass.TOTAL_INCREASING,
             },
         ],
     },
@@ -310,12 +313,8 @@ SENSORS = {
         "attributes": [
             {
                 "name": ATTR_STATE_CLASS,
-                "value": TOTAL_INCREASING,
+                "value": SensorStateClass.TOTAL_INCREASING,
             },
         ],
     },
 }
-
-# Defaults
-DEFAULT_BAUDRATE = 1200
-DEFAULT_TIMEOUT = 2.0

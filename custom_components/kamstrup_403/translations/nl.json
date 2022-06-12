@@ -20,7 +20,7 @@
         "step": {
             "user": {
                 "data": {
-                    "sensor": "Sensor ingeschakeld"
+                    "scan_interval": "Scaninterval (seconden)"
                 }
             }
         }
