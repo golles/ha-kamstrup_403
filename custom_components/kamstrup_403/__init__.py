@@ -41,7 +41,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         hass.data.setdefault(DOMAIN, {})
 
     port = entry.data.get(CONF_PORT)
-    scan_interval = entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
+    scan_interval_seconds = entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
+    scan_interval = timedelta(seconds=scan_interval_seconds)
 
     client = Kamstrup(port, DEFAULT_BAUDRATE, DEFAULT_TIMEOUT)
 
