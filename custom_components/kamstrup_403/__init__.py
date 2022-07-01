@@ -88,7 +88,7 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator):
         data = {}
         for key, sensor in SENSORS.items():
             try:
-                _LOGGER.debug("Read %s (%s)", key, sensor["name"])
+                _LOGGER.debug("Reading sensor %s (%s)", sensor["name"], key)
                 value, unit = self.kamstrup.readvar(sensor["command"])
                 data[sensor["command"]] = {"value": value, "unit": unit}
             except (serial.SerialException) as exception:

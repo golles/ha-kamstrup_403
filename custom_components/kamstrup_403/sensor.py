@@ -15,7 +15,7 @@ async def async_setup_entry(hass, entry, async_add_devices):
     _LOGGER.debug("async_setup_entry")
 
     for key, sensor in SENSORS.items():
-        _LOGGER.debug("add sensor %s (%s)", key, sensor["name"])
+        _LOGGER.debug("Add sensor %s (%s)", sensor["name"], key)
         async_add_devices(
             [
                 KamstrupSensor(
