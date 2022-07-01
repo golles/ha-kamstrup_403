@@ -30,7 +30,9 @@ from .const import (
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
-async def async_setup(hass: HomeAssistant, config: Config):
+async def async_setup(
+    hass: HomeAssistant, config: Config
+):  # pylint: disable=unused-argument
     """Set up this integration using YAML is not supported."""
     return True
 
@@ -84,12 +86,20 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator):
         _LOGGER.debug("KamstrupUpdateCoordinator: _async_update_data start")
 
         data = {}
-        for key in SENSORS:
+        for key, sensor in SENSORS.items():
             try:
-                value, unit = self.kamstrup.readvar(SENSORS[key]["command"])
-                data[SENSORS[key]["command"]] = {"value": value, "unit": unit}
-            except (serial.SerialException):
-                _LOGGER.error("Device disconnected or multiple access on port?")
+                _LOGGER.debug("Read %s (%s)", key, sensor["name"])
+                value, unit = self.kamstrup.readvar(sensor["command"])
+                data[sensor["command"]] = {"value": value, "unit": unit}
+            except (serial.SerialException) as exception:
+                _LOGGER.error(
+                    "Device disconnected or multiple access on port? \nException: %e",
+                    exception,
+                )
+            except (Exception) as exception:  # pylint: disable=broad-except
+                _LOGGER.error(
+                    "Error reading %s \nException: %s", sensor["name"], exception
+                )
         return data
 
 

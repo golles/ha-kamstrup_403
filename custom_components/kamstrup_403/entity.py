@@ -6,6 +6,8 @@ from .const import DOMAIN, NAME, ATTRIBUTION, MANUFACTURER, MODEL
 
 
 class KamstrupEntity(CoordinatorEntity):
+    """CoordinatorEntity for Kamstrup 403."""
+
     def __init__(self, coordinator, config_entry):
         super().__init__(coordinator)
         self.config_entry = config_entry
