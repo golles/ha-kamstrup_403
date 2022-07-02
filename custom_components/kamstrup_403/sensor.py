@@ -1,11 +1,9 @@
 """Sensor platform for kamstrup_403."""
+import logging
 from homeassistant.components.sensor import SensorEntity
 
-from .const import DOMAIN, SENSOR, SENSORS, MANUFACTURER, MODEL
+from .const import DOMAIN, SENSORS, MANUFACTURER, MODEL
 from .entity import KamstrupEntity
-
-
-import logging
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -16,18 +14,18 @@ async def async_setup_entry(hass, entry, async_add_devices):
 
     _LOGGER.debug("async_setup_entry")
 
-    for key in SENSORS:
-        _LOGGER.debug("add sensor %s", SENSORS[key]["name"])
+    for key, sensor in SENSORS.items():
+        _LOGGER.debug("Add sensor %s (%s)", sensor["name"], key)
         async_add_devices(
             [
                 KamstrupSensor(
                     coordinator,
                     entry,
-                    SENSORS[key].get("name", None),
-                    SENSORS[key].get("icon", None),
-                    SENSORS[key].get("device_class", None),
-                    SENSORS[key].get("attributes", []),
-                    SENSORS[key].get("command", None),
+                    sensor.get("name", None),
+                    sensor.get("icon", None),
+                    sensor.get("device_class", None),
+                    sensor.get("attributes", []),
+                    sensor.get("command", None),
                 )
             ]
         )
@@ -48,7 +46,7 @@ class KamstrupSensor(KamstrupEntity, SensorEntity):
     ):
         super().__init__(coordinator, config_entry)
         self.coordinator = coordinator
-        self._name = "{} {} {}".format(MANUFACTURER, MODEL, name)
+        self._name = f"{MANUFACTURER} {MODEL} {name}"
         self._icon = icon
         self._device_class = device_class
         self._attributes = attributes
