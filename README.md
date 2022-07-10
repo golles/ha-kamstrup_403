@@ -30,6 +30,7 @@ Meter | Supported | Description
 Kamstrup 403 | Yes | 
 Kamstrup 601 | Yes | Confirmed in [#14](https://github.com/golles/ha-kamstrup_403/issues/14)
 Kamstrup 602 | Yes | Confirmed in [#10](https://github.com/golles/ha-kamstrup_403/issues/10)
+Kamstrup 603 | Yes | Confirmed in [#18](https://github.com/golles/ha-kamstrup_403/issues/18)
 Kamstrup 402 | Maybe | [Mentioned here](https://github.com/golles/ha-kamstrup_403/blob/main/custom_components/kamstrup_403/kamstrup.py#L12)
 Kamstrup MC66C | No | Supported in my [old component](https://github.com/golles/Home-Assistant-Sensor-MC66C)
 
