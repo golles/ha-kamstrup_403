@@ -1,0 +1,30 @@
+name: Add supported device
+description: Does this component work on a meter that isn't listed?
+body:
+  - type: input
+    id: meter
+    validations:
+      required: true
+    attributes:
+      label: Meter
+      placeholder: Kamstrup 403
+      description: Please provide the meter name/version.
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Details
+
+  - type: textarea
+    id: info
+    validations:
+      required: true
+    attributes:
+      label: More info
+      description: >-
+        Please provide any info about the meter that could be useful, like picture, link etc.
+
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this working meter with the project!

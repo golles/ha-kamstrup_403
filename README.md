@@ -25,7 +25,7 @@ The read/write head looks like this:
 
 ### Supported devices
 
-This component is created to only support the Kamstrup 403 meter. This is a conscious decision because I do own this device and I can only offer support for that. There are some similar devices that work with the same communication protocol. If it does work for a meter that isn't listed below, please create a [feature request](https://github.com/golles/ha-kamstrup_403/issues/new?assignees=&labels=enhancement&template=feature_request.yaml) so I can update the table.
+This component is created to only support the Kamstrup 403 meter. This is a conscious decision because I do own this device and I can only offer support for that. There are some similar devices that work with the same communication protocol. If it does work for a meter that isn't listed below, please create a [feature request](https://github.com/golles/ha-kamstrup_403/issues/new?template=supported_device.yaml) so I can update the table.
 Meter | Supported | Description
 -- | -- | --
 Kamstrup 403 | Yes | 
