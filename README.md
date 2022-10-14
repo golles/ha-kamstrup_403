@@ -45,27 +45,18 @@ This component can be installed in your Home Assistant with HACS.
 
 ### Manual
 
-1. Using the tool of choice open the directory (folder) for your HA configuration (where you find `configuration.yaml`).
-2. If you do not have a `custom_components` directory (folder) there, you need to create it.
-3. In the `custom_components` directory (folder) create a new folder called `kamstrup_403`.
-4. Download _all_ the files from the `custom_components/kamstrup_403/` directory (folder) in this repository.
-5. Place the files you downloaded in the new directory (folder) you created.
-6. Restart Home Assistant
-7. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Kamstrup 403"
-
-Using your HA configuration directory (folder) as a starting point you should now also have this:
-
-```text
-custom_components/kamstrup_403/translations/en.json
-custom_components/kamstrup_403/translations/nl.json
-custom_components/kamstrup_403/__init__.py
-custom_components/kamstrup_403/config_flow.py
-custom_components/kamstrup_403/const.py
-custom_components/kamstrup_403/entity.py
-custom_components/kamstrup_403/kamstrup.py
-custom_components/kamstrup_403/manifest.json
-custom_components/kamstrup_403/sensor.py
+In HASSIO shell type the following:
 ```
+cd /tmp
+mkdir -P /config/custom_components
+curl -sL https://github.com/golles/ha-kamstrup_403/archive/refs/heads/main.zip|unzip -
+mv ha-kamstrup_403-main/custom_components/kamstrup_403 /config/custom_components/
+rm -rf ha-kamstrup_403-main/
+
+ha core restart
+```
+Then in the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Kamstrup 403"
+
 
 ## Configuration is done in the UI
 
