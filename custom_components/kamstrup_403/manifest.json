@@ -4,7 +4,7 @@
   "documentation": "https://github.com/golles/ha-kamstrup_403",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/golles/ha-kamstrup_403/issues",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "config_flow": true,
   "codeowners": [
     "@golles"

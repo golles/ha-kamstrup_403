@@ -88,9 +88,10 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator):
         data = {}
         for key, sensor in SENSORS.items():
             try:
-                _LOGGER.debug("Reading sensor %s (%s)", sensor["name"], key)
                 value, unit = self.kamstrup.readvar(sensor["command"])
                 data[sensor["command"]] = {"value": value, "unit": unit}
+                _LOGGER.debug("New value for sensor %s, value: %s %s", sensor["name"], value, unit)
+                await asyncio.sleep(1)
             except (serial.SerialException) as exception:
                 _LOGGER.error(
                     "Device disconnected or multiple access on port? \nException: %e",
