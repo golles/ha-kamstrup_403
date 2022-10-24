@@ -18,8 +18,8 @@ Kamstrup 403 custom component for Home Assistant.
 ## Requirements
 
 To use this component, you'll need a cable with an IR read/write head and connect your machine running Home Assistant directly to the IR sensor of the Kamstrup meter.
-The one from [Volkszaehler.org](https://wiki.volkszaehler.org/hardware/controllers/ir-schreib-lesekopf) seems to work fine, but might be hard to get.  
-The read/write head looks like this:  
+The one from [Volkszaehler.org](https://wiki.volkszaehler.org/hardware/controllers/ir-schreib-lesekopf) seems to work fine, but might be hard to get.
+The read/write head looks like this:
 ![cable](https://user-images.githubusercontent.com/2211503/136630069-9da49f09-6f9c-4618-8255-40195405f21a.jpg)
 
 
@@ -28,11 +28,11 @@ The read/write head looks like this:
 This component is created to only support the Kamstrup 403 meter. This is a conscious decision because I do own this device and I can only offer support for that. There are some similar devices that work with the same communication protocol. If it does work for a meter that isn't listed below, please create a [feature request](https://github.com/golles/ha-kamstrup_403/issues/new?template=supported_device.yaml) so I can update the table.
 Meter | Supported | Description
 -- | -- | --
-Kamstrup 403 | Yes | 
+Kamstrup 403 | Yes |
 Kamstrup 601 | Yes | Confirmed in [#14](https://github.com/golles/ha-kamstrup_403/issues/14)
 Kamstrup 602 | Yes | Confirmed in [#10](https://github.com/golles/ha-kamstrup_403/issues/10)
 Kamstrup 603 | Yes | Confirmed in [#18](https://github.com/golles/ha-kamstrup_403/issues/18)
-Kamstrup 402 | Maybe | [Mentioned here](https://github.com/golles/ha-kamstrup_403/blob/main/custom_components/kamstrup_403/kamstrup.py#L12)
+Kamstrup 402 | Yes | Confirmed in [#14](https://github.com/golles/ha-kamstrup_403/issues/27)
 Kamstrup MC66C | No | Supported in my [old component](https://github.com/golles/Home-Assistant-Sensor-MC66C)
 
 
@@ -69,7 +69,7 @@ custom_components/kamstrup_403/sensor.py
 
 ## Configuration is done in the UI
 
-It's recommended to use devices as `/dev/serial/by-id` and not `/dev/ttyUSB1` as the port. This because the first example is a stable identifier, while the second one can change when USB devices are added or removed, or even when you perform a system reboot.  
+It's recommended to use devices as `/dev/serial/by-id` and not `/dev/ttyUSB1` as the port. This because the first example is a stable identifier, while the second one can change when USB devices are added or removed, or even when you perform a system reboot.
 The port will be like: `/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_D307PBVY-if00-port0`.
 
 Some meters contain a battery, and communicating with the meter does impact battery life. By default, this component updates every 60 seconds. From version `1.2.0`, you can configure the update interval on the Integrations page:
