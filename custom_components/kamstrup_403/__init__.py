@@ -50,7 +50,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     device_info = DeviceInfo(
         entry_type=DeviceEntryType.SERVICE,
-        identifiers={(DOMAIN, entry.entry_id)},
+        identifiers={(DOMAIN, port)},
         manufacturer=NAME,
         name=NAME,
         model=VERSION,
