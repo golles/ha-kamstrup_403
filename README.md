@@ -8,17 +8,13 @@
 ![Project Maintenance][maintenance-shield]
 [![BuyMeCoffee][buymecoffeebadge]][buymecoffee]
 
-[![Discord][discord-shield]][discord]
-[![Community Forum][forum-shield]][forum]
-
 Kamstrup 403 custom component for Home Assistant.
 
 <img width="663" alt="info" src="https://user-images.githubusercontent.com/2211503/173236049-10647d83-9be6-49a6-a90b-671a8860c743.png">
 
 ## Requirements
 
-To use this component, you'll need a cable with an IR read/write head and connect your machine running Home Assistant directly to the IR sensor of the Kamstrup meter.
-The one from [Volkszaehler.org](https://wiki.volkszaehler.org/hardware/controllers/ir-schreib-lesekopf) seems to work fine, but might be hard to get.
+To use this custom component, you'll need a cable with an IR read/write head and connect your machine running Home Assistant directly to the IR sensor of the Kamstrup meter.
 The read/write head looks like this:
 ![cable](https://user-images.githubusercontent.com/2211503/136630069-9da49f09-6f9c-4618-8255-40195405f21a.jpg)
 
@@ -29,10 +25,10 @@ This component is created to only support the Kamstrup 403 meter. This is a cons
 Meter | Supported | Description
 -- | -- | --
 Kamstrup 403 | Yes |
+Kamstrup 402 | Yes | Confirmed in [#14](https://github.com/golles/ha-kamstrup_403/issues/27)
 Kamstrup 601 | Yes | Confirmed in [#14](https://github.com/golles/ha-kamstrup_403/issues/14)
 Kamstrup 602 | Yes | Confirmed in [#10](https://github.com/golles/ha-kamstrup_403/issues/10)
 Kamstrup 603 | Yes | Confirmed in [#18](https://github.com/golles/ha-kamstrup_403/issues/18)
-Kamstrup 402 | Yes | Confirmed in [#14](https://github.com/golles/ha-kamstrup_403/issues/27)
 Kamstrup MC66C | No | Supported in my [old component](https://github.com/golles/Home-Assistant-Sensor-MC66C)
 
 
@@ -40,7 +36,7 @@ Kamstrup MC66C | No | Supported in my [old component](https://github.com/golles/
 
 ### HACS
 
-This component can be installed in your Home Assistant with HACS.
+This component can easily be installed in your Home Assistant using HACS.
 
 
 ### Manual
@@ -61,7 +57,6 @@ custom_components/kamstrup_403/translations/nl.json
 custom_components/kamstrup_403/__init__.py
 custom_components/kamstrup_403/config_flow.py
 custom_components/kamstrup_403/const.py
-custom_components/kamstrup_403/entity.py
 custom_components/kamstrup_403/kamstrup.py
 custom_components/kamstrup_403/manifest.json
 custom_components/kamstrup_403/sensor.py
