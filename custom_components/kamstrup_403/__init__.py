@@ -112,6 +112,8 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator):
         """Update data via library."""
 
         data = {}
+        failed_counter = 0
+
         for sensor in DESCRIPTIONS:
             try:
                 value, unit = self.kamstrup.readvar(int(sensor.key))
@@ -119,6 +121,10 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator):
                 _LOGGER.debug(
                     "New value for sensor %s, value: %s %s", sensor.name, value, unit
                 )
+
+                if value is None and unit is None:
+                    failed_counter += 1
+
                 await asyncio.sleep(1)
             except (serial.SerialException) as exception:
                 _LOGGER.error(
@@ -130,4 +136,10 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator):
                     "Error reading %s \nException: %s", sensor.name, exception
                 )
                 raise UpdateFailed() from exception
+
+        if failed_counter == len(data):
+            _LOGGER.error(
+                "Wasn't able to get any readings from the meter, please check IR connection"
+            )
+
         return data
