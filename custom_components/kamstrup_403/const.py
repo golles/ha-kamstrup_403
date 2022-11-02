@@ -35,7 +35,7 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         name="Heat Energy (E1)",
         icon="mdi:radiator",
         device_class=SensorDeviceClass.ENERGY,
-        # state_class=SensorStateClass.TOTAL_INCREASING, # TODO 2022.11
+        state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     SensorEntityDescription(
         key="80",  # 0x0050
@@ -227,7 +227,7 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         name="Temp1xm3",
         icon="mdi:thermometer",
         device_class=SensorDeviceClass.TEMPERATURE,
-        # state_class=SensorStateClass.MEASUREMENT, todo?
+        state_class=SensorStateClass.MEASUREMENT,
         # entity_registry_enabled_default=False,
     ),
     SensorEntityDescription(
@@ -235,7 +235,7 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         name="Temp2xm3",
         icon="mdi:thermometer",
         device_class=SensorDeviceClass.TEMPERATURE,
-        # state_class=SensorStateClass.MEASUREMENT, todo?
+        state_class=SensorStateClass.MEASUREMENT,
         # entity_registry_enabled_default=False,
     ),
     SensorEntityDescription(
