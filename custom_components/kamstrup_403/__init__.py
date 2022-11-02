@@ -114,7 +114,7 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator):
         data = {}
         for sensor in DESCRIPTIONS:
             try:
-                value, unit = self.kamstrup.readvar(sensor.key)
+                value, unit = self.kamstrup.readvar(int(sensor.key))
                 data[sensor.key] = {"value": value, "unit": unit}
                 _LOGGER.debug(
                     "New value for sensor %s, value: %s %s", sensor.name, value, unit

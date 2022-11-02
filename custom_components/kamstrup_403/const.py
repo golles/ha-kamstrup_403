@@ -37,18 +37,18 @@ PLATFORMS = [SENSOR]
 
 DESCRIPTIONS: list[SensorEntityDescription] = [
     SensorEntityDescription(
-        # key="60",
+        key="60",
         # native_unit_of_measurement=ENERGY_GIGA_JOULE, # TODO 2022.11
         # state_class=SensorStateClass.TOTAL_INCREASING, # TODO 2022.11
-        key="0x003C",
+        # key="0x003C",
         name="Heat Energy (E1)",
         native_unit_of_measurement="GJ",
         icon="mdi:radiator",
         device_class=SensorDeviceClass.ENERGY,
     ),
     SensorEntityDescription(
-        # key="68",
-        key="0x0044",
+        key="68",
+        # key="0x0044",
         name="Volume",
         native_unit_of_measurement=VOLUME_CUBIC_METERS,
         icon="mdi:water",
