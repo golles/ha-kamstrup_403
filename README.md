@@ -71,6 +71,17 @@ Some meters contain a battery, and communicating with the meter does impact batt
 
 <img width="290" alt="opt1" src="https://user-images.githubusercontent.com/2211503/173235828-fd130b51-99b0-4522-b697-4d69df51925d.png"> <img width="392" alt="opt2" src="https://user-images.githubusercontent.com/2211503/173235826-ffd79769-cc2c-4404-9b79-d233aef8587e.png">
 
+## Collect logs
+
+When you want to report an issue, please add logs from this component. You can enable logging for this component by configuring the logger in Home Assistant as following:
+```yaml
+logger:
+  default: warn
+  logs:
+    custom_components.kamstrup_403: debug
+```
+More info can be found on the [Home Assistant logger integration page](https://www.home-assistant.io/integrations/logger)
+
 ## Contributions are welcome!
 
 If you want to contribute to this please read the [Contribution guidelines](CONTRIBUTING.md)
