@@ -54,3 +54,8 @@ class KamstrupSensor(CoordinatorEntity[KamstrupUpdateCoordinator], SensorEntity)
     def native_value(self) -> StateType:
         """Return the state of the sensor."""
         return self.coordinator.data[self.entity_description.key].get("value")
+
+    @property
+    def native_unit_of_measurement(self) -> str | None:
+        """Return the unit of measurement of the sensor, if any."""
+        return self.coordinator.data[self.entity_description.key].get("unit")
