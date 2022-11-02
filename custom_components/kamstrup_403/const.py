@@ -26,8 +26,8 @@ DEFAULT_SCAN_INTERVAL: Final = 3600
 DEFAULT_TIMEOUT: Final = 0.2
 
 # Platforms
-SENSOR = "sensor"
-PLATFORMS = [SENSOR]
+SENSOR: Final = "sensor"
+PLATFORMS: Final = [SENSOR]
 
 DESCRIPTIONS: list[SensorEntityDescription] = [
     SensorEntityDescription(
