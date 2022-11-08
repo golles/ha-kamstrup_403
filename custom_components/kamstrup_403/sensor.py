@@ -1,6 +1,7 @@
 """Sensor platform for kamstrup_403."""
 
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import VOLUME_CUBIC_METERS
 from homeassistant.core import HomeAssistant
 from homeassistant.components.sensor import (
     DOMAIN as SENSOR_DOMAIN,
@@ -254,14 +255,36 @@ async def async_setup_entry(
     """Set up Kamstrup sensors based on a config entry."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
 
-    async_add_entities(
-        KamstrupSensor(
+    entities: list[KamstrupSensor] = []
+
+    # Add all meter sensors described above.
+    for description in DESCRIPTIONS:
+        entities.append(
+            KamstrupMeterSensor(
+                coordinator=coordinator,
+                entry_id=entry.entry_id,
+                description=description,
+            )
+        )
+
+    # Add a "gas" sensor.
+    entities.append(
+        KamstrupGasSensor(
             coordinator=coordinator,
             entry_id=entry.entry_id,
-            description=description,
+            description=SensorEntityDescription(
+                key="gas",
+                name="Heat Energy to Gas",
+                icon="mdi:gas-burner",
+                unit_of_measurement=VOLUME_CUBIC_METERS,
+                device_class=SensorDeviceClass.GAS,
+                state_class=SensorStateClass.TOTAL_INCREASING,
+                entity_registry_enabled_default=False,
+            ),
         )
-        for description in DESCRIPTIONS
     )
+
+    async_add_entities(entities)
 
 
 class KamstrupSensor(CoordinatorEntity[KamstrupUpdateCoordinator], SensorEntity):
@@ -280,6 +303,10 @@ class KamstrupSensor(CoordinatorEntity[KamstrupUpdateCoordinator], SensorEntity)
         self.entity_description = description
         self._attr_unique_id = f"{entry_id}-{DEFAULT_NAME} {self.name}"
         self._attr_device_info = coordinator.device_info
+
+
+class KamstrupMeterSensor(KamstrupSensor):
+    """Defines a Kamstrup meter sensor."""
 
     async def async_added_to_hass(self) -> None:
         """Run when entity about to be added to hass."""
@@ -304,5 +331,17 @@ class KamstrupSensor(CoordinatorEntity[KamstrupUpdateCoordinator], SensorEntity)
         """Return the unit of measurement of the sensor, if any."""
         if self.coordinator.data and self.coordinator.data[self.entity_description.key]:
             return self.coordinator.data[self.entity_description.key].get("unit")
+
+        return None
+
+
+class KamstrupGasSensor(KamstrupSensor):
+    """Defines a Kamstrup gas sensor."""
+
+    @property
+    def native_value(self) -> StateType:
+        """Return the state of the sensor."""
+        if self.coordinator.data and self.coordinator.data["60"]:
+            return self.coordinator.data["60"].get("value")
 
         return None
