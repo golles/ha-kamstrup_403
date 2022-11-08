@@ -276,7 +276,7 @@ async def async_setup_entry(
                 key="gas",
                 name="Heat Energy to Gas",
                 icon="mdi:gas-burner",
-                unit_of_measurement=VOLUME_CUBIC_METERS,
+                native_unit_of_measurement=VOLUME_CUBIC_METERS,
                 device_class=SensorDeviceClass.GAS,
                 state_class=SensorStateClass.TOTAL_INCREASING,
                 entity_registry_enabled_default=False,
