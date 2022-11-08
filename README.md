@@ -10,14 +10,18 @@
 
 Kamstrup 403 custom component for Home Assistant.
 
-<img width="663" alt="info" src="https://user-images.githubusercontent.com/2211503/173236049-10647d83-9be6-49a6-a90b-671a8860c743.png">
+<img width="660" alt="info" src="https://user-images.githubusercontent.com/2211503/200671065-201f84bc-0d01-4a87-8fd9-3da3beedfb5d.png">
 
 ## Requirements
 
 To use this custom component, you'll need a cable with an IR read/write head and connect your machine running Home Assistant directly to the IR sensor of the Kamstrup meter.
-The read/write head looks like this:
+The read/write head looks like this:<br>
 ![cable](https://user-images.githubusercontent.com/2211503/136630069-9da49f09-6f9c-4618-8255-40195405f21a.jpg)
 
+### Placing the IR head
+
+There is not a lot of tolerance for placing the IR head on the meter, it can be very tedious to get this right. The best way is to fix the head to the meter. I suggest this 3D printed holder from [Thingiverse](https://www.thingiverse.com/thing:5615493).<br>
+![647d4ce9-4e72-4c54-95e6-d4caf720a79b](https://user-images.githubusercontent.com/2211503/200637881-19fd9166-ea5c-4805-a127-4b9be87f2de5.jpeg)
 
 ### Supported devices
 
@@ -64,12 +68,16 @@ custom_components/kamstrup_403/sensor.py
 
 ## Configuration is done in the UI
 
-It's recommended to use devices as `/dev/serial/by-id` and not `/dev/ttyUSB1` as the port. This because the first example is a stable identifier, while the second one can change when USB devices are added or removed, or even when you perform a system reboot.
-The port will be like: `/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_D307PBVY-if00-port0`.
+It's recommended to use devices as `/dev/serial/by-id` and not `/dev/ttyUSB1` as the port. This is because the first example is a stable identifier, while the second one can change when USB devices are added or removed, or even when you perform a system reboot.<br>
+The port should look like: `/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_D307PBVY-if00-port0`.
 
-Some meters contain a battery, and communicating with the meter does impact battery life. By default, this component updates every 60 seconds. From version `1.2.0`, you can configure the update interval on the Integrations page:
+Some meters contain a battery, and communicating with the meter does impact battery life. By default, this component updates every 3600 seconds (1 hour). From version `1.2.0`, you can configure the update interval. You can do this by pressing `configure` on the Integrations page:
 
-<img width="290" alt="opt1" src="https://user-images.githubusercontent.com/2211503/173235828-fd130b51-99b0-4522-b697-4d69df51925d.png"> <img width="392" alt="opt2" src="https://user-images.githubusercontent.com/2211503/173235826-ffd79769-cc2c-4404-9b79-d233aef8587e.png">
+<img width="290" alt="integration" src="https://user-images.githubusercontent.com/2211503/200671075-39c7a812-42a2-4a4d-8934-6ea37517a400.png"> <img width="392" alt="configure" src="https://user-images.githubusercontent.com/2211503/200671074-7b4c73da-f4cf-47bb-b293-46e5d8850163.png">
+
+## Integration in the energy dashboard
+
+The `Heat Energy (E1)` sensor can be added to the energy dashboard as an individual device.
 
 ## Collect logs
 
@@ -88,17 +96,12 @@ If you want to contribute to this please read the [Contribution guidelines](CONT
 
 ***
 
-[knmi]: https://github.com/golles/ha-kamstrup_403
 [buymecoffee]: https://www.buymeacoffee.com/golles
 [buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
 [commits-shield]: https://img.shields.io/github/commit-activity/y/golles/ha-kamstrup_403.svg?style=for-the-badge
 [commits]: https://github.com/golles/ha-kamstrup_403/commits/main
 [hacs]: https://github.com/custom-components/hacs
 [hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
-[discord]: https://discord.gg/Qa5fW2R
-[discord-shield]: https://img.shields.io/discord/330944238910963714.svg?style=for-the-badge
-[forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=for-the-badge
-[forum]: https://community.home-assistant.io/
 [license-shield]: https://img.shields.io/github/license/golles/ha-kamstrup_403.svg?style=for-the-badge
 [maintenance-shield]: https://img.shields.io/badge/maintainer-golles-blue.svg?style=for-the-badge
 [releases-shield]: https://img.shields.io/github/release/golles/ha-kamstrup_403.svg?style=for-the-badge
