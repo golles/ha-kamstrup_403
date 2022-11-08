@@ -20,7 +20,7 @@ The read/write head looks like this:<br>
 
 ### Placing the IR head
 
-There is not a lot of tolerance for placing the IR head on the meter, it can be very tedious to get this right. The best way is to fix the head to the meter. I suggest this 3D printed holder from [Thingiverse](https://www.thingiverse.com/thing:5615493).<br>
+There is not a lot of tolerance for placing the IR head on the meter, it can be very tedious to get this right. The best way is to fix the head to the meter. I suggest this 3D-printed holder from [Thingiverse](https://www.thingiverse.com/thing:5615493).<br>
 ![647d4ce9-4e72-4c54-95e6-d4caf720a79b](https://user-images.githubusercontent.com/2211503/200637881-19fd9166-ea5c-4805-a127-4b9be87f2de5.jpeg)
 
 ### Supported devices
@@ -53,7 +53,7 @@ This component can easily be installed in your Home Assistant using HACS.
 6. Restart Home Assistant
 7. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Kamstrup 403"
 
-Using your HA configuration directory (folder) as a starting point you should now also have this:
+Using your HA configuration directory (folder) as a starting point you should now also have these files:
 
 ```text
 custom_components/kamstrup_403/translations/en.json
@@ -68,8 +68,8 @@ custom_components/kamstrup_403/sensor.py
 
 ## Configuration is done in the UI
 
-It's recommended to use devices as `/dev/serial/by-id` and not `/dev/ttyUSB1` as the port. This is because the first example is a stable identifier, while the second one can change when USB devices are added or removed, or even when you perform a system reboot.<br>
-The port should look like: `/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_D307PBVY-if00-port0`.
+It's recommended to use devices as `/dev/serial/by-id` and not `/dev/ttyUSB1` as the port. This is because the first example is a stable identifier, while the second can change when USB devices are added or removed, or even when you perform a system reboot.<br>
+The port should look like this: `/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_D307PBVY-if00-port0`.
 
 Some meters contain a battery, and communicating with the meter does impact battery life. By default, this component updates every 3600 seconds (1 hour). From version `1.2.0`, you can configure the update interval. You can do this by pressing `configure` on the Integrations page:
 
@@ -77,11 +77,12 @@ Some meters contain a battery, and communicating with the meter does impact batt
 
 ## Integration in the energy dashboard
 
-The `Heat Energy (E1)` sensor can be added to the energy dashboard as an individual device.
+The `Heat Energy (E1)` sensor can be added to the energy dashboard as an individual device.<br>
+There is also a sensor named `Heat Energy to Gas`, this sensor is disabled by default and can be enabled manually. This is a conversion sensor, that takes the `Heat Energy (E1)` value, and represents itself as a `gas` sensor. This can be added to the energy dashboard under the gas section.
 
 ## Collect logs
 
-When you want to report an issue, please add logs from this component. You can enable logging for this component by configuring the logger in Home Assistant as following:
+When you want to report an issue, please add logs from this component. You can enable logging for this component by configuring the logger in Home Assistant as follows:
 ```yaml
 logger:
   default: warn
