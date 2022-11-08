@@ -6,7 +6,7 @@ https://github.com/custom-components/kamstrup_403
 """
 import asyncio
 from datetime import timedelta
-from typing import Any
+from typing import Any, List
 import logging
 import serial
 
@@ -47,6 +47,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     scan_interval_seconds = entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
     scan_interval = timedelta(seconds=scan_interval_seconds)
 
+    _LOGGER.debug("Set up entry, with scan_interval %s seconds", scan_interval_seconds)
+
     client = Kamstrup(port, DEFAULT_BAUDRATE, DEFAULT_TIMEOUT)
 
     device_info = DeviceInfo(
@@ -67,7 +69,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     for platform in PLATFORMS:
         if entry.options.get(platform, True):
-            coordinator.platforms.append(platform)
             await hass.async_add_job(
                 hass.config_entries.async_forward_entry_setup(entry, platform)
             )
@@ -107,9 +108,8 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator):
         """Initialize."""
         self.kamstrup = client
         self.device_info = device_info
-        self.platforms = []
 
-        self._commands = []
+        self._commands: List[str] = []
 
         super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=scan_interval)
 
@@ -153,7 +153,7 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator):
 
         if failed_counter == len(data):
             _LOGGER.error(
-                "Finished update, Wasn't able to get any readings from the meter. Please check the IR connection"
+                "Finished update, No readings from the meter. Please check the IR connection"
             )
         else:
             _LOGGER.debug(
