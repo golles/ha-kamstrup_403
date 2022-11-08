@@ -7,6 +7,7 @@ https://github.com/custom-components/kamstrup_403
 import asyncio
 from datetime import timedelta
 from typing import Any
+import logging
 import serial
 
 from homeassistant.config_entries import ConfigEntry
@@ -20,16 +21,16 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from .kamstrup import Kamstrup
 
 from .const import (
-    _LOGGER,
     DEFAULT_BAUDRATE,
     DEFAULT_SCAN_INTERVAL,
     DEFAULT_TIMEOUT,
-    DESCRIPTIONS,
     DOMAIN,
     NAME,
     PLATFORMS,
     VERSION,
 )
+
+_LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 async def async_setup(_hass: HomeAssistant, _config: Config) -> bool:
@@ -59,10 +60,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     coordinator = KamstrupUpdateCoordinator(
         hass=hass, client=client, scan_interval=scan_interval, device_info=device_info
     )
-    await coordinator.async_config_entry_first_refresh()
-
-    if not coordinator.last_update_success:
-        raise ConfigEntryNotReady
 
     hass.data[DOMAIN][entry.entry_id] = coordinator
 
@@ -71,9 +68,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     for platform in PLATFORMS:
         if entry.options.get(platform, True):
             coordinator.platforms.append(platform)
-            hass.async_add_job(
+            await hass.async_add_job(
                 hass.config_entries.async_forward_entry_setup(entry, platform)
             )
+
+    await coordinator.async_config_entry_first_refresh()
+
+    if not coordinator.last_update_success:
+        raise ConfigEntryNotReady
+
     return True
 
 
@@ -106,20 +109,33 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator):
         self.device_info = device_info
         self.platforms = []
 
+        self._commands = []
+
         super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=scan_interval)
+
+    def register_command(self, command: str) -> None:
+        """Add a command to the commands list."""
+        _LOGGER.debug("Register command %s", command)
+        self._commands.append(command)
+
+    def unregister_command(self, command: str) -> None:
+        """Remove a command from the commands list."""
+        _LOGGER.debug("Unregister command %s", command)
+        self._commands.remove(command)
 
     async def _async_update_data(self) -> dict[str, Any]:
         """Update data via library."""
+        _LOGGER.debug("Start update")
 
         data = {}
         failed_counter = 0
 
-        for sensor in DESCRIPTIONS:
+        for command in self._commands:
             try:
-                value, unit = self.kamstrup.readvar(int(sensor.key))
-                data[sensor.key] = {"value": value, "unit": unit}
+                value, unit = self.kamstrup.readvar(int(command))
+                data[command] = {"value": value, "unit": unit}
                 _LOGGER.debug(
-                    "New value for sensor %s, value: %s %s", sensor.name, value, unit
+                    "New value for sensor %s, value: %s %s", command, value, unit
                 )
 
                 if value is None and unit is None:
@@ -132,14 +148,16 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator):
                     exception,
                 )
             except (Exception) as exception:
-                _LOGGER.error(
-                    "Error reading %s \nException: %s", sensor.name, exception
-                )
+                _LOGGER.error("Error reading %s \nException: %s", command, exception)
                 raise UpdateFailed() from exception
 
         if failed_counter == len(data):
             _LOGGER.error(
-                "Wasn't able to get any readings from the meter, please check IR connection"
+                "Finished update, Wasn't able to get any readings from the meter. Please check the IR connection"
+            )
+        else:
+            _LOGGER.debug(
+                "Finished update, %s/%s readings failed", failed_counter, len(data)
             )
 
         return data
