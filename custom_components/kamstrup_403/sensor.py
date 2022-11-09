@@ -1,87 +1,347 @@
 """Sensor platform for kamstrup_403."""
-import logging
-from homeassistant.components.sensor import SensorEntity
 
-from .const import DOMAIN, SENSORS, MANUFACTURER, MODEL
-from .entity import KamstrupEntity
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import VOLUME_CUBIC_METERS
+from homeassistant.core import HomeAssistant
+from homeassistant.components.sensor import (
+    DOMAIN as SENSOR_DOMAIN,
+    SensorDeviceClass,
+    SensorEntity,
+    SensorEntityDescription,
+    SensorStateClass,
+)
+from homeassistant.helpers.entity import EntityCategory
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.typing import StateType
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-_LOGGER: logging.Logger = logging.getLogger(__package__)
+from . import KamstrupUpdateCoordinator
+from .const import DEFAULT_NAME, DOMAIN
+
+DESCRIPTIONS: list[SensorEntityDescription] = [
+    SensorEntityDescription(
+        key="60",  # 0x003C
+        name="Heat Energy (E1)",
+        icon="mdi:radiator",
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+    ),
+    SensorEntityDescription(
+        key="80",  # 0x0050
+        name="Power",
+        icon="mdi:flash",
+        device_class=SensorDeviceClass.POWER,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="86",  # 0x0056
+        name="Temp1",
+        icon="mdi:thermometer",
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="87",  # 0x0057
+        name="Temp2",
+        icon="mdi:thermometer",
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="89",  # 0x0059
+        name="Tempdiff",
+        icon="mdi:thermometer",
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="74",  # 0x004A
+        name="Flow",
+        icon="mdi:water",
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="68",  # 0x0044
+        name="Volume",
+        icon="mdi:water",
+        state_class=SensorStateClass.TOTAL_INCREASING,
+    ),
+    SensorEntityDescription(
+        key="141",  # 0x008D
+        name="MinFlow_M",
+        icon="mdi:water",
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="139",  # 0x008B
+        name="MaxFlow_M",
+        icon="mdi:water",
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="140",  # 0x008C
+        name="MinFlowDate_M",
+        icon="mdi:calendar",
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="138",  # 0x008A
+        name="MaxFlowDate_M",
+        icon="mdi:calendar",
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="145",  # 0x0091
+        name="MinPower_M",
+        icon="mdi:flash",
+        device_class=SensorDeviceClass.POWER,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="143",  # 0x008F
+        name="MaxPower_M",
+        icon="mdi:flash",
+        device_class=SensorDeviceClass.POWER,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="149",  # 0x0095
+        name="AvgTemp1_M",
+        icon="mdi:thermometer",
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="150",  # 0x0096
+        name="AvgTemp2_M",
+        icon="mdi:thermometer",
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="144",  # 0x0090
+        name="MinPowerDate_M",
+        icon="mdi:calendar",
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="142",  # 0x008E
+        name="MaxPowerDate_M",
+        icon="mdi:calendar",
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="126",  # 0x007E
+        name="MinFlow_Y",
+        icon="mdi:water",
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="124",  # 0x0096
+        name="MaxFlow_Y",
+        icon="mdi:water",
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="125",  # 0x007D
+        name="MinFlowDate_Y",
+        icon="mdi:calendar",
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="123",  # 0x007B
+        name="MaxFlowDate_Y",
+        icon="mdi:calendar",
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="130",  # 0x0082
+        name="MinPower_Y",
+        icon="mdi:flash",
+        device_class=SensorDeviceClass.POWER,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="128",  # 0x0080
+        name="MaxPower_Y",
+        icon="mdi:flash",
+        device_class=SensorDeviceClass.POWER,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="146",  # 0x0092
+        name="AvgTemp1_Y",
+        icon="mdi:thermometer",
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="147",  # 0x0093
+        name="AvgTemp2_Y",
+        icon="mdi:thermometer",
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="129",  # 0x0081
+        name="MinPowerDate_Y",
+        icon="mdi:calendar",
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="127",  # 0x007F
+        name="MaxPowerDate_Y",
+        icon="mdi:calendar",
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="97",  # 0x0061
+        name="Temp1xm3",
+        icon="mdi:thermometer",
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="110",  # 0x006E
+        name="Temp2xm3",
+        icon="mdi:thermometer",
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="113",  # 0x0071
+        name="Infoevent",
+        icon="mdi:eye",
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    SensorEntityDescription(
+        key="1004",  # 0x03EC
+        name="HourCounter",
+        icon="mdi:timer-sand",
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+]
 
 
-async def async_setup_entry(hass, entry, async_add_devices):
-    """Setup sensor platform."""
+async def async_setup_entry(
+    hass: HomeAssistant,
+    entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    """Set up Kamstrup sensors based on a config entry."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
 
-    _LOGGER.debug("async_setup_entry")
+    entities: list[KamstrupSensor] = []
 
-    for key, sensor in SENSORS.items():
-        _LOGGER.debug("Add sensor %s (%s)", sensor["name"], key)
-        async_add_devices(
-            [
-                KamstrupSensor(
-                    coordinator,
-                    entry,
-                    sensor.get("name", None),
-                    sensor.get("icon", None),
-                    sensor.get("device_class", None),
-                    sensor.get("attributes", []),
-                    sensor.get("command", None),
-                )
-            ]
+    # Add all meter sensors described above.
+    for description in DESCRIPTIONS:
+        entities.append(
+            KamstrupMeterSensor(
+                coordinator=coordinator,
+                entry_id=entry.entry_id,
+                description=description,
+            )
         )
 
+    # Add a "gas" sensor.
+    entities.append(
+        KamstrupGasSensor(
+            coordinator=coordinator,
+            entry_id=entry.entry_id,
+            description=SensorEntityDescription(
+                key="gas",
+                name="Heat Energy to Gas",
+                icon="mdi:gas-burner",
+                native_unit_of_measurement=VOLUME_CUBIC_METERS,
+                device_class=SensorDeviceClass.GAS,
+                state_class=SensorStateClass.TOTAL_INCREASING,
+                entity_registry_enabled_default=False,
+            ),
+        )
+    )
 
-class KamstrupSensor(KamstrupEntity, SensorEntity):
-    """Kamstrup Sensor class."""
+    async_add_entities(entities)
+
+
+class KamstrupSensor(CoordinatorEntity[KamstrupUpdateCoordinator], SensorEntity):
+    """Defines a Kamstrup sensor."""
 
     def __init__(
         self,
-        coordinator,
-        config_entry,
-        name,
-        icon,
-        device_class,
-        attributes,
-        command,
-    ):
-        super().__init__(coordinator, config_entry)
-        self.coordinator = coordinator
-        self._name = f"{MANUFACTURER} {MODEL} {name}"
-        self._icon = icon
-        self._device_class = device_class
-        self._attributes = attributes
-        self._command = command
+        coordinator: KamstrupUpdateCoordinator,
+        entry_id: str,
+        description: SensorEntityDescription,
+    ) -> None:
+        """Initialize Kamstrup sensor."""
+        super().__init__(coordinator=coordinator)
+
+        self.entity_id = f"{SENSOR_DOMAIN}.{DEFAULT_NAME}_{description.name}".lower()
+        self.entity_description = description
+        self._attr_unique_id = f"{entry_id}-{DEFAULT_NAME} {self.name}"
+        self._attr_device_info = coordinator.device_info
+
+
+class KamstrupMeterSensor(KamstrupSensor):
+    """Defines a Kamstrup meter sensor."""
+
+    async def async_added_to_hass(self) -> None:
+        """Run when entity about to be added to hass."""
+        await super().async_added_to_hass()
+        self.coordinator.register_command(self.entity_description.key)
+
+    async def async_will_remove_from_hass(self) -> None:
+        """Run when entity will be removed from hass."""
+        await super().async_will_remove_from_hass()
+        self.coordinator.unregister_command(self.entity_description.key)
 
     @property
-    def name(self):
-        """Return the name of the sensor."""
-        return self._name
+    def native_value(self) -> StateType:
+        """Return the state of the sensor."""
+        if self.coordinator.data and self.coordinator.data[self.entity_description.key]:
+            return self.coordinator.data[self.entity_description.key].get("value", None)
+
+        return None
 
     @property
-    def native_value(self):
-        """Return the native_value of the sensor."""
-        return self.coordinator.data[self._command].get("value")
+    def native_unit_of_measurement(self) -> str | None:
+        """Return the unit of measurement of the sensor, if any."""
+        if self.coordinator.data and self.coordinator.data[self.entity_description.key]:
+            return self.coordinator.data[self.entity_description.key].get("unit", None)
+
+        return None
+
+
+class KamstrupGasSensor(KamstrupSensor):
+    """Defines a Kamstrup gas sensor."""
 
     @property
-    def native_unit_of_measurement(self):
-        """Return the unit of measurement of this entity, if any."""
-        return self.coordinator.data[self._command].get("unit")
+    def native_value(self) -> StateType:
+        """Return the state of the sensor."""
+        if self.coordinator.data and self.coordinator.data["60"]:
+            return self.coordinator.data["60"].get("value", None)
 
-    @property
-    def icon(self):
-        """Return the icon of the sensor."""
-        return self._icon
-
-    @property
-    def device_class(self):
-        """Return the device class."""
-        return self._device_class
-
-    @property
-    def extra_state_attributes(self):
-        """Return the device state attributes."""
-        attributes = super().extra_state_attributes
-        for attribute in self._attributes:
-            attributes[attribute.get("name", None)] = attribute.get("value", None)
-
-        return attributes
+        return None
