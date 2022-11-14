@@ -1,6 +1,4 @@
 """Test kamstrup_403 setup process."""
-from homeassistant.exceptions import ConfigEntryNotReady
-import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.kamstrup_403 import (

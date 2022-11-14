@@ -6,10 +6,6 @@
   "issue_tracker": "https://github.com/golles/ha-kamstrup_403/issues",
   "version": "2.0.0",
   "config_flow": true,
-  "codeowners": [
-    "@golles"
-  ],
-  "requirements": [
-    "pyserial==3.5"
-  ]
+  "codeowners": ["@golles"],
+  "requirements": ["pyserial==3.5"]
 }

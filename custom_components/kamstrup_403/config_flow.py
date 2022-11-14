@@ -2,15 +2,10 @@
 from homeassistant import config_entries
 from homeassistant.const import CONF_PORT, CONF_SCAN_INTERVAL, CONF_TIMEOUT
 from homeassistant.core import callback
-import voluptuous as vol
 import serial
+import voluptuous as vol
 
-from .const import (
-    DEFAULT_BAUDRATE,
-    DEFAULT_SCAN_INTERVAL,
-    DEFAULT_TIMEOUT,
-    DOMAIN,
-)
+from .const import DEFAULT_BAUDRATE, DEFAULT_SCAN_INTERVAL, DEFAULT_TIMEOUT, DOMAIN
 
 
 class KamstrupFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
@@ -79,7 +74,7 @@ class KamstrupOptionsFlowHandler(config_entries.OptionsFlow):
     """Kamstrup config flow options handler."""
 
     def __init__(self, config_entry):
-        """Initialize HACS options flow."""
+        """Initialize options flow."""
         self.config_entry = config_entry
         self.options = dict(config_entry.options)
 

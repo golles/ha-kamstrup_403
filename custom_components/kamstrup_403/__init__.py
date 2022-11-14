@@ -6,9 +6,8 @@ https://github.com/custom-components/kamstrup_403
 """
 import asyncio
 from datetime import timedelta
-from typing import Any, List
 import logging
-import serial
+from typing import Any, List
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PORT, CONF_SCAN_INTERVAL
@@ -17,8 +16,7 @@ from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.device_registry import DeviceEntryType
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
-
-from .kamstrup import Kamstrup
+import serial
 
 from .const import (
     DEFAULT_BAUDRATE,
@@ -29,6 +27,7 @@ from .const import (
     PLATFORMS,
     VERSION,
 )
+from .kamstrup import Kamstrup
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 

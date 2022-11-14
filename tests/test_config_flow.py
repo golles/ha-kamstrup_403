@@ -2,7 +2,7 @@
 from unittest.mock import patch
 
 from homeassistant import config_entries, data_entry_flow
-from homeassistant.const import CONF_PORT, CONF_SCAN_INTERVAL
+from homeassistant.const import CONF_PORT
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -10,16 +10,14 @@ from custom_components.kamstrup_403.const import DOMAIN, SENSOR
 
 from .const import MOCK_CONFIG, MOCK_UPDATE_CONFIG
 
+
 # This fixture bypasses the actual setup of the integration
 # since we only want to test the config flow. We test the
 # actual functionality of the integration in other test modules.
 @pytest.fixture(autouse=True)
 def bypass_setup_fixture():
     """Prevent setup."""
-    with patch(
-        "custom_components.kamstrup_403.async_setup",
-        return_value=True,
-    ), patch(
+    with patch("custom_components.kamstrup_403.async_setup", return_value=True,), patch(
         "custom_components.kamstrup_403.async_setup_entry",
         return_value=True,
     ):
