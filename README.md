@@ -71,9 +71,10 @@ custom_components/kamstrup_403/sensor.py
 It's recommended to use devices as `/dev/serial/by-id` and not `/dev/ttyUSB1` as the port. This is because the first example is a stable identifier, while the second can change when USB devices are added or removed, or even when you perform a system reboot.<br>
 The port should look like this: `/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_D307PBVY-if00-port0`.
 
-Some meters contain a battery, and communicating with the meter does impact battery life. By default, this component updates every 3600 seconds (1 hour). From version `1.2.0`, you can configure the update interval. You can do this by pressing `configure` on the Integrations page:
+Some meters contain a battery, and communicating with the meter does impact battery life. By default, this component updates every `3600` seconds (1 hour). This is configurable. Also, since version `2.0.1` you can also configure the serial timeout. The default value is `1.0` seconds, if you get the error `Finished update, No readings from the meter. Please check the IR connection` you can try to increase this value. Fractional numbers are allowed (eg. `0.5`).
+You can do this by pressing `configure` on the Integrations page:
 
-<img width="290" alt="integration" src="https://user-images.githubusercontent.com/2211503/200671075-39c7a812-42a2-4a4d-8934-6ea37517a400.png"> <img width="392" alt="configure" src="https://user-images.githubusercontent.com/2211503/200671074-7b4c73da-f4cf-47bb-b293-46e5d8850163.png">
+<img width="300" alt="integration" src="https://user-images.githubusercontent.com/2211503/200671075-39c7a812-42a2-4a4d-8934-6ea37517a400.png"> <img width="300" alt="configure" src="https://user-images.githubusercontent.com/2211503/201747344-b019693a-1d88-4ca1-9a28-87fa24992e13.png">
 
 ## Integration in the energy dashboard
 

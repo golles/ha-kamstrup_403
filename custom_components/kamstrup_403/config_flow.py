@@ -97,12 +97,18 @@ class KamstrupOptionsFlowHandler(config_entries.OptionsFlow):
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Optional(
+                    vol.Required(
                         CONF_SCAN_INTERVAL,
                         default=self.config_entry.options.get(
                             CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
                         ),
                     ): vol.All(vol.Coerce(int), vol.Range(min=1, max=86400)),
+                    vol.Required(
+                        CONF_TIMEOUT,
+                        default=self.config_entry.options.get(
+                            CONF_TIMEOUT, DEFAULT_TIMEOUT
+                        ),
+                    ): vol.All(vol.Coerce(float), vol.Range(min=0.0, max=5.0)),
                 }
             ),
         )

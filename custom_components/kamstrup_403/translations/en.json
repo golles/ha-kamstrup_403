@@ -20,7 +20,8 @@
     "step": {
       "user": {
         "data": {
-          "scan_interval": "Scan interval (seconds)"
+          "scan_interval": "Scan interval (seconds)",
+          "timeout": "Serial read timeout (seconds)"
         }
       }
     }
