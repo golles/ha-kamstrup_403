@@ -13,10 +13,9 @@
 #
 # Modified by Sander Gols to integrate in HA component
 
-from __future__ import print_function
+import math
 
 import serial
-import math
 
 #######################################################################
 # Units, provided by Erik Jensen
