@@ -1,2 +1,2 @@
 homeassistant
-pyserial
+pyserial==3.5

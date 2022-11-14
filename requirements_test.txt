@@ -1,2 +1,2 @@
-pytest-homeassistant-custom-component==0.10.4
-pyserial
+pytest-homeassistant-custom-component
+pyserial==3.5
