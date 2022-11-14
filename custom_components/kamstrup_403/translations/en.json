@@ -1,28 +1,28 @@
 {
-    "config": {
-        "step": {
-            "user": {
-                "title": "Kamstrup meter",
-                "description": "Enter the serial port that is connected to your meter",
-                "data": {
-                    "port": "Serial port"
-                }
-            }
-        },
-        "error": {
-            "port": "Can't connect to given serial prot."
-        },
-        "abort": {
-            "single_instance_allowed": "Only a single instance is allowed."
+  "config": {
+    "step": {
+      "user": {
+        "title": "Kamstrup meter",
+        "description": "Enter the serial port that is connected to your meter",
+        "data": {
+          "port": "Serial port"
         }
+      }
     },
-    "options": {
-        "step": {
-            "user": {
-                "data": {
-                    "scan_interval": "Scan Interval (seconds)"
-                }
-            }
-        }
+    "error": {
+      "port": "Can't connect to given serial prot."
+    },
+    "abort": {
+      "single_instance_allowed": "Only a single instance is allowed."
     }
+  },
+  "options": {
+    "step": {
+      "user": {
+        "data": {
+          "scan_interval": "Scan interval (seconds)"
+        }
+      }
+    }
+  }
 }
