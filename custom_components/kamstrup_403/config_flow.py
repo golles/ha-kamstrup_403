@@ -1,6 +1,6 @@
 """Adds config flow for Kamstrup 403."""
 from homeassistant import config_entries
-from homeassistant.const import CONF_PORT, CONF_SCAN_INTERVAL
+from homeassistant.const import CONF_PORT, CONF_SCAN_INTERVAL, CONF_TIMEOUT
 from homeassistant.core import callback
 import voluptuous as vol
 import serial
@@ -97,12 +97,18 @@ class KamstrupOptionsFlowHandler(config_entries.OptionsFlow):
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Optional(
+                    vol.Required(
                         CONF_SCAN_INTERVAL,
                         default=self.config_entry.options.get(
                             CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
                         ),
                     ): vol.All(vol.Coerce(int), vol.Range(min=1, max=86400)),
+                    vol.Required(
+                        CONF_TIMEOUT,
+                        default=self.config_entry.options.get(
+                            CONF_TIMEOUT, DEFAULT_TIMEOUT
+                        ),
+                    ): vol.All(vol.Coerce(float), vol.Range(min=0.0, max=5.0)),
                 }
             ),
         )

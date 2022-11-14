@@ -14,7 +14,7 @@ ATTRIBUTION: Final = "Data provided by Kamstrup 403 meter"
 DEFAULT_NAME: Final = NAME
 DEFAULT_BAUDRATE: Final = 1200
 DEFAULT_SCAN_INTERVAL: Final = 3600
-DEFAULT_TIMEOUT: Final = 0.2
+DEFAULT_TIMEOUT: Final = 1.0
 
 # Platforms
 SENSOR: Final = "sensor"
