@@ -14,13 +14,13 @@ Kamstrup 403 custom component for Home Assistant.
 
 ## Requirements
 
-To use this custom component, you'll need a cable with an IR read/write head and connect your machine running Home Assistant directly to the IR sensor of the Kamstrup meter.
-The read/write head looks like this:<br>
+To use this custom component, you'll need an optical eye and connect your machine running Home Assistant directly with the optical eye to the Kamstrup meter.
+The optical eye looks like this:<br>
 ![cable](https://user-images.githubusercontent.com/2211503/136630069-9da49f09-6f9c-4618-8255-40195405f21a.jpg)
 
-### Placing the IR head
+### Placing the optical eye
 
-There is not a lot of tolerance for placing the IR head on the meter, it can be very tedious to get this right. The best way is to fix the head to the meter. I suggest this 3D-printed holder from [Thingiverse](https://www.thingiverse.com/thing:5615493).<br>
+There is not a lot of tolerance for placing the optical eye on the meter, it can be very tedious to get this right. The best way is to fix the optical eye to the meter. I suggest this 3D-printed holder from [Thingiverse](https://www.thingiverse.com/thing:5615493).<br>
 ![647d4ce9-4e72-4c54-95e6-d4caf720a79b](https://user-images.githubusercontent.com/2211503/200637881-19fd9166-ea5c-4805-a127-4b9be87f2de5.jpeg)
 
 ### Supported devices
@@ -78,8 +78,13 @@ You can do this by pressing `configure` on the Integrations page:
 
 ## Integration in the energy dashboard
 
-The `Heat Energy (E1)` sensor can be added to the energy dashboard as an individual device.<br>
-There is also a sensor named `Heat Energy to Gas`, this sensor is disabled by default and can be enabled manually. This is a conversion sensor, that takes the `Heat Energy (E1)` value, and represents itself as a `gas` sensor. This can be added to the energy dashboard under the gas section.
+This component does support integration into the Home Assitant's energy dashboard.
+### Heat Energy (E1)
+This sensor, with unit `GJ`, can since Home Assistant release 2022.11 directly be added to the energy dashboard. It's important to understand that you need to add this in the individual devices section. So not in the electricity or gas section. The devices here will be added on the bottom of your energy dashboard in a horizontal bar graph showing all your devices in `kWh`. This is by design and can't be changed by this component.
+
+### Heat Energy to Gas
+From version `2.0.0` of this component, there is `Heat Energy to Gas` sensor, this is disabled by default and needs to be manually enabled. It's also required to have the `Heat Energy (E1)` sensor enabled for this to work.
+This sensor acts as a `gas` sensor with the `m³` unit and has the same value as `Heat Energy (E1)`. This sensor can be added to the energy dashboard in the gas section. The added value for this is, that you get a better visual representation in the energy dashboard, eg hourly graphs.
 
 ## Collect logs
 
