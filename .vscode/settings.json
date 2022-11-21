@@ -18,7 +18,7 @@
   "editor.formatOnType": true,
   "files.trimTrailingWhitespace": true,
   "files.associations": {
-    "*.yaml": "home-assistant"
+    ".devcontainer/*.yaml": "home-assistant"
   },
   "editor.defaultFormatter": null,
   "[javascript]": {
@@ -36,5 +36,5 @@
   "[yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "cSpell.words": ["hass", "homeassistant", "knmi"]
+  "cSpell.words": ["baudrate", "hass", "homeassistant", "kamstrup"]
 }
