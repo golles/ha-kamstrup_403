@@ -10,7 +10,7 @@ import logging
 from typing import Any, List
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_PORT, CONF_SCAN_INTERVAL
+from homeassistant.const import CONF_PORT, CONF_SCAN_INTERVAL, CONF_TIMEOUT
 from homeassistant.core import Config, HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.device_registry import DeviceEntryType
@@ -45,10 +45,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     port = entry.data.get(CONF_PORT)
     scan_interval_seconds = entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
     scan_interval = timedelta(seconds=scan_interval_seconds)
+    timeout_seconds = entry.options.get(CONF_TIMEOUT, DEFAULT_TIMEOUT)
 
-    _LOGGER.debug("Set up entry, with scan_interval %s seconds", scan_interval_seconds)
+    _LOGGER.debug(
+        "Set up entry, with scan_interval of %s seconds and timeout of %s seconds",
+        scan_interval_seconds,
+        timeout_seconds,
+    )
 
-    client = Kamstrup(port, DEFAULT_BAUDRATE, DEFAULT_TIMEOUT)
+    client = Kamstrup(port, DEFAULT_BAUDRATE, timeout_seconds)
 
     device_info = DeviceInfo(
         entry_type=DeviceEntryType.SERVICE,
