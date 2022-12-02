@@ -1,11 +1,16 @@
 # Kamstrup 403
 
 [![GitHub Release][releases-shield]][releases]
-[![GitHub Activity][commits-shield]][commits]
+[![GitHub Repo stars][stars-shield]][stars]
 [![License][license-shield]](LICENSE)
 
-[![hacs][hacsbadge]][hacs]
+[![GitHub Activity][commits-shield]][commits]
+[![Code coverage][codecov-shield]][codecov]
+
+[![hacs][hacs-shield]][hacs]
+[![hacs][hacs-installs-shield]][hacs]
 ![Project Maintenance][maintenance-shield]
+
 [![BuyMeCoffee][buymecoffeebadge]][buymecoffee]
 
 Kamstrup 403 custom component for Home Assistant.
@@ -106,10 +111,15 @@ If you want to contribute to this please read the [Contribution guidelines](CONT
 [buymecoffee]: https://www.buymeacoffee.com/golles
 [buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
 [commits-shield]: https://img.shields.io/github/commit-activity/y/golles/ha-kamstrup_403.svg?style=for-the-badge
+[codecov]: https://app.codecov.io/gh/golles/ha-kamstrup_403
+[codecov-shield]: https://img.shields.io/codecov/c/github/golles/ha-kamstrup_403?style=for-the-badge
 [commits]: https://github.com/golles/ha-kamstrup_403/commits/main
 [hacs]: https://github.com/custom-components/hacs
-[hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
+[hacs-shield]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
+[hacs-installs-shield]: https://raw.githubusercontent.com/golles/ha-active-installation-badges/main/kamstrup_403.svg
 [license-shield]: https://img.shields.io/github/license/golles/ha-kamstrup_403.svg?style=for-the-badge
 [maintenance-shield]: https://img.shields.io/badge/maintainer-golles-blue.svg?style=for-the-badge
 [releases-shield]: https://img.shields.io/github/release/golles/ha-kamstrup_403.svg?style=for-the-badge
 [releases]: https://github.com/golles/ha-kamstrup_403/releases
+[stars-shield]: https://img.shields.io/github/stars/golles/ha-kamstrup_403?style=for-the-badge
+[stars]: https://github.com/golles/ha-kamstrup_403/stargazers
