@@ -3,14 +3,11 @@
 [![GitHub Release][releases-shield]][releases]
 [![GitHub Repo stars][stars-shield]][stars]
 [![License][license-shield]](LICENSE)
-
 [![GitHub Activity][commits-shield]][commits]
 [![Code coverage][codecov-shield]][codecov]
-
 [![hacs][hacs-shield]][hacs]
 [![hacs][hacs-installs-shield]][hacs]
-![Project Maintenance][maintenance-shield]
-
+[![Project Maintenance][maintenance-shield]][maintainer]
 [![BuyMeCoffee][buymecoffeebadge]][buymecoffee]
 
 Kamstrup 403 custom component for Home Assistant.
@@ -106,7 +103,6 @@ More info can be found on the [Home Assistant logger integration page](https://w
 
 If you want to contribute to this please read the [Contribution guidelines](CONTRIBUTING.md)
 
-***
 
 [buymecoffee]: https://www.buymeacoffee.com/golles
 [buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
@@ -118,6 +114,7 @@ If you want to contribute to this please read the [Contribution guidelines](CONT
 [hacs-shield]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
 [hacs-installs-shield]: https://raw.githubusercontent.com/golles/ha-active-installation-badges/main/kamstrup_403.svg
 [license-shield]: https://img.shields.io/github/license/golles/ha-kamstrup_403.svg?style=for-the-badge
+[maintainer]: https://github.com/golles
 [maintenance-shield]: https://img.shields.io/badge/maintainer-golles-blue.svg?style=for-the-badge
 [releases-shield]: https://img.shields.io/github/release/golles/ha-kamstrup_403.svg?style=for-the-badge
 [releases]: https://github.com/golles/ha-kamstrup_403/releases
