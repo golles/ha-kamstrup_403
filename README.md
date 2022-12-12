@@ -111,7 +111,7 @@ If you want to contribute to this please read the [Contribution guidelines](CONT
 [codecov-shield]: https://img.shields.io/codecov/c/github/golles/ha-kamstrup_403?style=for-the-badge
 [commits]: https://github.com/golles/ha-kamstrup_403/commits/main
 [hacs]: https://github.com/custom-components/hacs
-[hacs-shield]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
+[hacs-shield]: https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge
 [hacs-installs-shield]: https://raw.githubusercontent.com/golles/ha-active-installation-badges/main/kamstrup_403.svg
 [license-shield]: https://img.shields.io/github/license/golles/ha-kamstrup_403.svg?style=for-the-badge
 [maintainer]: https://github.com/golles
