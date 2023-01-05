@@ -232,8 +232,6 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         key="113",  # 0x0071
         name="Infoevent",
         icon="mdi:eye",
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
     SensorEntityDescription(
