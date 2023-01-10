@@ -1,4 +1,6 @@
 """Test kamstrup_403 setup process."""
+from homeassistant.exceptions import ConfigEntryNotReady
+import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.kamstrup_403 import (
@@ -39,13 +41,12 @@ async def test_setup_unload_and_reload_entry(hass, bypass_get_data):
     assert config_entry.entry_id not in hass.data[DOMAIN]
 
 
-# TODO Test fix
-# async def test_setup_entry_exception(hass, error_on_get_data):
-#     """Test ConfigEntryNotReady when API raises an exception during entry setup."""
-#     config_entry = MockConfigEntry(domain=DOMAIN, data=MOCK_CONFIG, entry_id="test")
+async def test_setup_entry_exception(hass, error_on_get_data):
+    """Test ConfigEntryNotReady when API raises an exception during entry setup."""
+    config_entry = MockConfigEntry(domain=DOMAIN, data=MOCK_CONFIG, entry_id="test")
 
-#     # In this case we are testing the condition where async_setup_entry raises
-#     # ConfigEntryNotReady using the `error_on_get_data` fixture which simulates
-#     # an error.
-#     with pytest.raises(ConfigEntryNotReady):
-#         assert await async_setup_entry(hass, config_entry)
+    # In this case we are testing the condition where async_setup_entry raises
+    # ConfigEntryNotReady using the `error_on_get_data` fixture which simulates
+    # an error.
+    with pytest.raises(ConfigEntryNotReady):
+        assert await async_setup_entry(hass, config_entry)

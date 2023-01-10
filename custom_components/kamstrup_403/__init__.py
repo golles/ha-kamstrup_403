@@ -53,7 +53,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         timeout_seconds,
     )
 
-    client = Kamstrup(port, DEFAULT_BAUDRATE, timeout_seconds)
+    try:
+        client = Kamstrup(port, DEFAULT_BAUDRATE, timeout_seconds)
+    except (Exception) as exception:
+        _LOGGER.error("Can't establish a connection with %s", port)
+        raise ConfigEntryNotReady() from exception
 
     device_info = DeviceInfo(
         entry_type=DeviceEntryType.SERVICE,
