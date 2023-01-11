@@ -53,7 +53,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         timeout_seconds,
     )
 
-    client = Kamstrup(port, DEFAULT_BAUDRATE, timeout_seconds)
+    try:
+        client = Kamstrup(port, DEFAULT_BAUDRATE, timeout_seconds)
+    except (Exception) as exception:
+        _LOGGER.error("Can't establish a connection with %s", port)
+        raise ConfigEntryNotReady() from exception
 
     device_info = DeviceInfo(
         entry_type=DeviceEntryType.SERVICE,
@@ -113,21 +117,21 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator):
         self.kamstrup = client
         self.device_info = device_info
 
-        self._commands: List[str] = []
+        self._commands: List[int] = []
 
         super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=scan_interval)
 
-    def register_command(self, command: str) -> None:
+    def register_command(self, command: int) -> None:
         """Add a command to the commands list."""
         _LOGGER.debug("Register command %s", command)
         self._commands.append(command)
 
-    def unregister_command(self, command: str) -> None:
+    def unregister_command(self, command: int) -> None:
         """Remove a command from the commands list."""
         _LOGGER.debug("Unregister command %s", command)
         self._commands.remove(command)
 
-    async def _async_update_data(self) -> dict[str, Any]:
+    async def _async_update_data(self) -> dict[int, Any]:
         """Update data via library."""
         _LOGGER.debug("Start update")
 
@@ -136,7 +140,7 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator):
 
         for command in self._commands:
             try:
-                value, unit = self.kamstrup.readvar(int(command))
+                value, unit = self.kamstrup.readvar(command)
                 data[command] = {"value": value, "unit": unit}
                 _LOGGER.debug(
                     "New value for sensor %s, value: %s %s", command, value, unit

@@ -308,26 +308,31 @@ class KamstrupMeterSensor(KamstrupSensor):
     async def async_added_to_hass(self) -> None:
         """Run when entity about to be added to hass."""
         await super().async_added_to_hass()
-        self.coordinator.register_command(self.entity_description.key)
+        self.coordinator.register_command(self.int_key)
 
     async def async_will_remove_from_hass(self) -> None:
         """Run when entity will be removed from hass."""
         await super().async_will_remove_from_hass()
-        self.coordinator.unregister_command(self.entity_description.key)
+        self.coordinator.unregister_command(self.int_key)
+
+    @property
+    def int_key(self) -> int:
+        """Get the key as an int"""
+        return int(self.entity_description.key)
 
     @property
     def native_value(self) -> StateType:
         """Return the state of the sensor."""
-        if self.coordinator.data and self.coordinator.data[self.entity_description.key]:
-            return self.coordinator.data[self.entity_description.key].get("value", None)
+        if self.coordinator.data and self.coordinator.data[self.int_key]:
+            return self.coordinator.data[self.int_key].get("value", None)
 
         return None
 
     @property
     def native_unit_of_measurement(self) -> str | None:
         """Return the unit of measurement of the sensor, if any."""
-        if self.coordinator.data and self.coordinator.data[self.entity_description.key]:
-            return self.coordinator.data[self.entity_description.key].get("unit", None)
+        if self.coordinator.data and self.coordinator.data[self.int_key]:
+            return self.coordinator.data[self.int_key].get("unit", None)
 
         return None
 
@@ -338,7 +343,7 @@ class KamstrupGasSensor(KamstrupSensor):
     @property
     def native_value(self) -> StateType:
         """Return the state of the sensor."""
-        if self.coordinator.data and self.coordinator.data["60"]:
-            return self.coordinator.data["60"].get("value", None)
+        if self.coordinator.data and self.coordinator.data[60]:
+            return self.coordinator.data[60].get("value", None)
 
         return None
