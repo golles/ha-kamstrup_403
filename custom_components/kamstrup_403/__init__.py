@@ -155,7 +155,9 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator):
             if command in values:
                 value, unit = values[command]
                 data[command] = {"value": value, "unit": unit}
-                _LOGGER.debug("New value for sensor %s, value: %s %s", command, value, unit)
+                _LOGGER.debug(
+                    "New value for sensor %s, value: %s %s", command, value, unit
+                )
 
         if failed_counter == len(data):
             _LOGGER.error(
