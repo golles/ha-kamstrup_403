@@ -4,7 +4,6 @@ Custom integration to integrate kamstrup_403 with Home Assistant.
 For more details about this integration, please refer to
 https://github.com/custom-components/kamstrup_403
 """
-import asyncio
 from datetime import timedelta
 import logging
 from typing import Any, List
@@ -27,7 +26,7 @@ from .const import (
     PLATFORMS,
     VERSION,
 )
-from .kamstrup import Kamstrup
+from .pykamstrup.kamstrup import Kamstrup
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -136,28 +135,26 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator):
         _LOGGER.debug("Start update")
 
         data = {}
-        failed_counter = 0
+
+        try:
+            values = self.kamstrup.get_values(self._commands)
+        except (serial.SerialException) as exception:
+            _LOGGER.error(
+                "Device disconnected or multiple access on port? \nException: %e",
+                exception,
+            )
+        except (Exception) as exception:
+            _LOGGER.error(
+                "Error reading multiple %s \nException: %s", self._commands, exception
+            )
+            raise UpdateFailed() from exception
+
+        failed_counter = len(self._commands) - len(values)
 
         for command in self._commands:
-            try:
-                value, unit = self.kamstrup.readvar(command)
-                data[command] = {"value": value, "unit": unit}
-                _LOGGER.debug(
-                    "New value for sensor %s, value: %s %s", command, value, unit
-                )
-
-                if value is None and unit is None:
-                    failed_counter += 1
-
-                await asyncio.sleep(1)
-            except (serial.SerialException) as exception:
-                _LOGGER.error(
-                    "Device disconnected or multiple access on port? \nException: %e",
-                    exception,
-                )
-            except (Exception) as exception:
-                _LOGGER.error("Error reading %s \nException: %s", command, exception)
-                raise UpdateFailed() from exception
+            value, unit = values[command]
+            data[command] = {"value": value, "unit": unit}
+            _LOGGER.debug("New value for sensor %s, value: %s %s", command, value, unit)
 
         if failed_counter == len(data):
             _LOGGER.error(
@@ -165,7 +162,9 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator):
             )
         else:
             _LOGGER.debug(
-                "Finished update, %s/%s readings failed", failed_counter, len(data)
+                "Finished update, %s out of %s readings failed",
+                failed_counter,
+                len(data),
             )
 
         return data
