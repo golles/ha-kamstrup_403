@@ -54,7 +54,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     try:
         client = Kamstrup(port, DEFAULT_BAUDRATE, timeout_seconds)
-    except (Exception) as exception:
+    except Exception as exception:
         _LOGGER.error("Can't establish a connection with %s", port)
         raise ConfigEntryNotReady() from exception
 
@@ -138,12 +138,12 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator):
 
         try:
             values = self.kamstrup.get_values(self._commands)
-        except (serial.SerialException) as exception:
+        except serial.SerialException as exception:
             _LOGGER.error(
                 "Device disconnected or multiple access on port? \nException: %e",
                 exception,
             )
-        except (Exception) as exception:
+        except Exception as exception:
             _LOGGER.error(
                 "Error reading multiple %s \nException: %s", self._commands, exception
             )
