@@ -1,11 +1,7 @@
 """Tests sensor."""
 
-from homeassistant.components.sensor import (
-    SensorDeviceClass,
-    SensorEntityDescription,
-    SensorStateClass,
-)
-from homeassistant.const import VOLUME_CUBIC_METERS
+from homeassistant.components.sensor import SensorEntityDescription
+import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.kamstrup_403 import async_setup_entry
@@ -15,6 +11,7 @@ from custom_components.kamstrup_403.sensor import KamstrupGasSensor, KamstrupMet
 from .const import MOCK_CONFIG
 
 
+@pytest.mark.asyncio
 async def test_kamstrup_gas_sensor(hass, bypass_get_data):
     """Test is_on function on base class."""
     config_entry = MockConfigEntry(domain=DOMAIN, data=MOCK_CONFIG, entry_id="test")
@@ -35,6 +32,7 @@ async def test_kamstrup_gas_sensor(hass, bypass_get_data):
     assert sensor.state == 1234
 
 
+@pytest.mark.asyncio
 async def test_kamstrup_meter_sensor(hass, bypass_get_data):
     """Test is_on function on base class."""
     config_entry = MockConfigEntry(domain=DOMAIN, data=MOCK_CONFIG, entry_id="test")
