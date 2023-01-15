@@ -1,8 +1,6 @@
 """Test for versions."""
 import json
 
-import pytest
-
 from custom_components.kamstrup_403.const import VERSION
 
 with open(
@@ -13,13 +11,11 @@ with open(
 manifest = json.loads(data)
 
 
-@pytest.mark.asyncio
 async def test_component_version():
     """Verify that the version in the manifest and const.py are equal"""
     assert manifest["version"] == VERSION
 
 
-@pytest.mark.asyncio
 async def test_component_requirements():
     """Verify that all requirements in the manifest.json are defined as in the requirements files"""
     requirements_files = ["requirements_dev.txt", "requirements_test.txt"]
