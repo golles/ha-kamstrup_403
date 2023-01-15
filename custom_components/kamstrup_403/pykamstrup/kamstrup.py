@@ -154,7 +154,9 @@ class Kamstrup:
 
         return (value, unit)
 
-    def get_values(self, multiple_nbr: list[int]):
+    def get_values(
+        self, multiple_nbr: list[int]
+    ) -> (tuple[None, None] | tuple[float | None, str | None] | dict):
         """Get values from the meter"""
 
         # Construct the request.
