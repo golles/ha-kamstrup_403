@@ -1,0 +1,1 @@
+"""PyKamstrup module."""

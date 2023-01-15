@@ -39,7 +39,7 @@ class KamstrupFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     return self.async_create_entry(
                         title=user_input[CONF_PORT], data=user_input
                     )
-                except (serial.SerialException):
+                except serial.SerialException:
                     self._errors["base"] = "port"
             else:
                 self._errors["base"] = "port"
