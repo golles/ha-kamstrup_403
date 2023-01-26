@@ -1,5 +1,5 @@
 name: Feature request
-description: Suggest an idea for this project
+description: Suggest an idea for this project, no need to request ESP(Home), MQTT, or Ser2Net features, those are out of scope
 labels: [enhancement]
 body:
   - type: checkboxes
