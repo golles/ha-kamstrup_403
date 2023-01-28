@@ -58,12 +58,15 @@ This component can easily be installed in your Home Assistant using HACS.
 Using your HA configuration directory (folder) as a starting point you should now also have these files:
 
 ```text
+custom_components/kamstrup_403/pykamstrup/__init__.py
+custom_components/kamstrup_403/pykamstrup/const.py
+custom_components/kamstrup_403/pykamstrup/kamstrup.py
 custom_components/kamstrup_403/translations/en.json
 custom_components/kamstrup_403/translations/nl.json
 custom_components/kamstrup_403/__init__.py
 custom_components/kamstrup_403/config_flow.py
 custom_components/kamstrup_403/const.py
-custom_components/kamstrup_403/kamstrup.py
+custom_components/kamstrup_403/diagnostics.py
 custom_components/kamstrup_403/manifest.json
 custom_components/kamstrup_403/sensor.py
 ```
