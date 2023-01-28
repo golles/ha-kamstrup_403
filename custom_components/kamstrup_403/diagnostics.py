@@ -15,4 +15,5 @@ async def async_get_config_entry_diagnostics(
     return {
         "config_entry": config_entry.as_dict(),
         "data": coordinator.data,
+        "registered_commands": coordinator.commands,
     }

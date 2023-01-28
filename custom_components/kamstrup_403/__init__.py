@@ -130,6 +130,11 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator):
         _LOGGER.debug("Unregister command %s", command)
         self._commands.remove(command)
 
+    @property
+    def commands(self) -> List[int]:
+        """List of registered commands"""
+        return self._commands
+
     async def _async_update_data(self) -> dict[int, Any]:
         """Update data via library."""
         _LOGGER.debug("Start update")
