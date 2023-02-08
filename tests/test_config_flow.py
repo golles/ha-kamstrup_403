@@ -17,7 +17,10 @@ from .const import MOCK_CONFIG, MOCK_UPDATE_CONFIG
 @pytest.fixture(autouse=True)
 def bypass_setup_fixture():
     """Prevent setup."""
-    with patch("custom_components.kamstrup_403.async_setup", return_value=True,), patch(
+    with patch(
+        "custom_components.kamstrup_403.async_setup",
+        return_value=True,
+    ), patch(
         "custom_components.kamstrup_403.async_setup_entry",
         return_value=True,
     ):

@@ -47,7 +47,7 @@ class Kamstrup:
         bytearray_data = bytearray(data)
         self.ser.write(bytearray_data)
 
-    def _read(self) -> (int | None):
+    def _read(self) -> int | None:
         """Read directly from the meter"""
         data = self.ser.read(1)
         if len(data) == 0:
@@ -77,7 +77,7 @@ class Kamstrup:
         data.append(0x0D)
         self._write(data)
 
-    def _receive(self) -> (bytearray | None):
+    def _receive(self) -> bytearray | None:
         """Receive data"""
         # Skip first response, which is repetition of initial command,
         # only break on 0x0d if it comes after 0x40.
@@ -140,7 +140,7 @@ class Kamstrup:
 
     def get_value(
         self, nbr: int
-    ) -> (tuple[None, None] | tuple[float | None, str | None]):
+    ) -> tuple[None, None] | tuple[float | None, str | None]:
         """Get a value from the meter"""
         self._send(0x80, (0x3F, 0x10, 0x01, nbr >> 8, nbr & 0xFF))
 
@@ -157,7 +157,7 @@ class Kamstrup:
 
     def get_values(
         self, multiple_nbr: list[int]
-    ) -> (tuple[None, None] | tuple[float | None, str | None] | dict):
+    ) -> tuple[None, None] | tuple[float | None, str | None] | dict:
         """Get values from the meter"""
 
         if len(multiple_nbr) > MULTIPLE_NBR_MAX:
