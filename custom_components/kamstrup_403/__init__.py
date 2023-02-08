@@ -26,7 +26,7 @@ from .const import (
     PLATFORMS,
     VERSION,
 )
-from .pykamstrup.kamstrup import Kamstrup
+from .pykamstrup.kamstrup import Kamstrup, MULTIPLE_NBR_MAX
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -140,29 +140,39 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator):
         _LOGGER.debug("Start update")
 
         data = {}
+        failed_counter = 0
 
-        try:
-            values = self.kamstrup.get_values(self._commands)
-        except serial.SerialException as exception:
-            _LOGGER.error(
-                "Device disconnected or multiple access on port? \nException: %e",
-                exception,
-            )
-        except Exception as exception:
-            _LOGGER.error(
-                "Error reading multiple %s \nException: %s", self._commands, exception
-            )
-            raise UpdateFailed() from exception
+        # The amount of values that can request at once is limited, do it in chunks.
+        chunks: list[list[int]] = [
+            self._commands[i : i + MULTIPLE_NBR_MAX]
+            for i in range(0, len(self._commands), MULTIPLE_NBR_MAX)
+        ]
 
-        failed_counter = len(self._commands) - len(values)
+        for chunk in chunks:
+            _LOGGER.debug("Get values for %s", chunk)
 
-        for command in self._commands:
-            if command in values:
-                value, unit = values[command]
-                data[command] = {"value": value, "unit": unit}
-                _LOGGER.debug(
-                    "New value for sensor %s, value: %s %s", command, value, unit
+            try:
+                values = self.kamstrup.get_values(chunk)
+            except serial.SerialException as exception:
+                _LOGGER.error(
+                    "Device disconnected or multiple access on port? \nException: %e",
+                    exception,
                 )
+            except Exception as exception:
+                _LOGGER.error(
+                    "Error reading multiple %s \nException: %s", chunk, exception
+                )
+                raise UpdateFailed() from exception
+
+            for command in chunk:
+                if command in values:
+                    value, unit = values[command]
+                    data[command] = {"value": value, "unit": unit}
+                    _LOGGER.debug(
+                        "New value for sensor %s, value: %s %s", command, value, unit
+                    )
+
+            failed_counter += len(chunk) - len(values)
 
         if failed_counter == len(data):
             _LOGGER.error(

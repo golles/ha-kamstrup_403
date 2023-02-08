@@ -15,6 +15,7 @@ import serial
 from .const import ESCAPES, UNITS
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
+MULTIPLE_NBR_MAX: int = 8
 
 
 class Kamstrup:
@@ -158,6 +159,14 @@ class Kamstrup:
         self, multiple_nbr: list[int]
     ) -> (tuple[None, None] | tuple[float | None, str | None] | dict):
         """Get values from the meter"""
+
+        if len(multiple_nbr) > MULTIPLE_NBR_MAX:
+            multiple_nbr = multiple_nbr[:MULTIPLE_NBR_MAX]
+            _LOGGER.warning(
+                "Can only get %i values at once, will only update %s",
+                MULTIPLE_NBR_MAX,
+                multiple_nbr,
+            )
 
         # Construct the request.
         req = bytearray()
