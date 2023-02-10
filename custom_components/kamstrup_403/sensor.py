@@ -144,7 +144,6 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         key="126",  # 0x007E
         name="MinFlow_Y",
         icon="mdi:water",
-        device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
         entity_registry_enabled_default=False,
     ),
@@ -152,7 +151,6 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         key="124",  # 0x0096
         name="MaxFlow_Y",
         icon="mdi:water",
-        device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
         entity_registry_enabled_default=False,
     ),
