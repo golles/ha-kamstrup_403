@@ -237,6 +237,12 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
     SensorEntityDescription(
+        key="1001",  # 0x03E9
+        name="Serial number",
+        icon="mdi:barcode",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    SensorEntityDescription(
         key="1004",  # 0x03EC
         name="HourCounter",
         icon="mdi:timer-sand",
