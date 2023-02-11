@@ -232,7 +232,7 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
     ),
     SensorEntityDescription(
         key="113",  # 0x0071
-        name="Infoevent_counter",
+        name="Infoevent counter",
         icon="mdi:eye",
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
