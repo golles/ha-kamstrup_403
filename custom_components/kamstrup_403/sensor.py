@@ -144,7 +144,6 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         key="126",  # 0x007E
         name="MinFlow_Y",
         icon="mdi:water",
-        device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
         entity_registry_enabled_default=False,
     ),
@@ -152,7 +151,6 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         key="124",  # 0x0096
         name="MaxFlow_Y",
         icon="mdi:water",
-        device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
         entity_registry_enabled_default=False,
     ),
@@ -216,7 +214,6 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         key="97",  # 0x0061
         name="Temp1xm3",
         icon="mdi:thermometer",
-        device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
         entity_registry_enabled_default=False,
     ),
@@ -224,14 +221,25 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         key="110",  # 0x006E
         name="Temp2xm3",
         icon="mdi:thermometer",
-        device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
         entity_registry_enabled_default=False,
     ),
     SensorEntityDescription(
-        key="113",  # 0x0071
+        key="99",  # 0x0063
         name="Infoevent",
         icon="mdi:eye",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    SensorEntityDescription(
+        key="113",  # 0x0071
+        name="Infoevent counter",
+        icon="mdi:eye",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    SensorEntityDescription(
+        key="1001",  # 0x03E9
+        name="Serial number",
+        icon="mdi:barcode",
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
     SensorEntityDescription(
