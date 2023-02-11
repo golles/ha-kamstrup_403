@@ -229,18 +229,21 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         name="Infoevent",
         icon="mdi:eye",
         entity_category=EntityCategory.DIAGNOSTIC,
+        native_precision=0,
     ),
     SensorEntityDescription(
         key="113",  # 0x0071
         name="Infoevent counter",
         icon="mdi:eye",
         entity_category=EntityCategory.DIAGNOSTIC,
+        native_precision=0,
     ),
     SensorEntityDescription(
         key="1001",  # 0x03E9
         name="Serial number",
         icon="mdi:barcode",
         entity_category=EntityCategory.DIAGNOSTIC,
+        native_precision=0,
     ),
     SensorEntityDescription(
         key="1004",  # 0x03EC
@@ -248,6 +251,7 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         icon="mdi:timer-sand",
         state_class=SensorStateClass.TOTAL_INCREASING,
         entity_category=EntityCategory.DIAGNOSTIC,
+        native_precision=0,
     ),
 ]
 
