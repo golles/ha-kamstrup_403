@@ -74,6 +74,20 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     SensorEntityDescription(
+        key="84",  # 0x0054
+        name="WaterMeter1",
+        icon="mdi:water",
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
+        key="85",  # 0x0055
+        name="WaterMeter2",
+        icon="mdi:water",
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
         key="141",  # 0x008D
         name="MinFlow_M",
         icon="mdi:water",
