@@ -7,38 +7,33 @@ on:
   pull_request: ~
 
 jobs:
-  validate:
-    runs-on: ubuntu-latest
-    name: Validate
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: HACS validation
-        uses: hacs/action@main
-        with:
-          category: integration
-          ignore: brands
-
-      - name: Hassfest validation
-        uses: home-assistant/actions/hassfest@master
-
   style:
     runs-on: ubuntu-latest
     name: Check style formatting
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
     steps:
-      - uses: actions/checkout@v3
+      - name: Check out code from GitHub
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-python@v4
+      - name: Setup python
+        uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: ${{ matrix.python-version }}
 
-      - run: python3 -m pip install black
+      - name: Install black
+        run: python3 -m pip install black
 
-      - run: black . --check
+      - name: Check code formatting
+        run: black . --check
 
   tests:
     runs-on: ubuntu-latest
     name: Run tests
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
     steps:
       - name: Check out code from GitHub
         uses: actions/checkout@v3
@@ -46,7 +41,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: ${{ matrix.python-version }}
 
       - name: Install requirements
         run: python3 -m pip install -r requirements_test.txt
@@ -67,5 +62,6 @@ jobs:
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
         with:
+          name: coverage-${{ matrix.python-version }}
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
