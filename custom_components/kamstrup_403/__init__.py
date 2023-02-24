@@ -26,7 +26,7 @@ from .const import (
     PLATFORMS,
     VERSION,
 )
-from .pykamstrup.kamstrup import Kamstrup, MULTIPLE_NBR_MAX
+from .pykamstrup.kamstrup import MULTIPLE_NBR_MAX, Kamstrup
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
