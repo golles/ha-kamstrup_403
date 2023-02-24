@@ -24,6 +24,18 @@
       "type": "shell",
       "command": "pytest --durations=10 --cov-report xml --cov=custom_components.kamstrup_403 tests",
       "problemMatcher": []
+    },
+    {
+      "label": "Run black",
+      "type": "shell",
+      "command": "black . --check",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run isort",
+      "type": "shell",
+      "command": "isort .",
+      "problemMatcher": []
     }
   ]
 }
