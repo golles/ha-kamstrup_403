@@ -18,7 +18,7 @@ async def test_component_version():
 
 async def test_component_requirements():
     """Verify that all requirements in the manifest.json are defined as in the requirements files"""
-    requirements_files = ["requirements_dev.txt", "requirements_test.txt"]
+    requirements_files = ["requirements.txt", "requirements_test.txt"]
     for requirements_file in requirements_files:
         with open(file=requirements_file, mode="r", encoding="UTF-8") as file:
             lines = [line.rstrip("\n") for line in file]

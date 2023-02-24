@@ -9,13 +9,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Check out code from GitHub
         uses: actions/checkout@v3
 
-      - name: Release
+      - name: Make release
         uses: softprops/action-gh-release@v1
         with:
           body: |
+            If you like this integration, please star this repo to show your appreciation - it makes me very happy!
+
             **Changes:**
             - Change 1
             - Change 2
