@@ -10,9 +10,6 @@ jobs:
   style:
     runs-on: ubuntu-latest
     name: Check style formatting
-    strategy:
-      matrix:
-        python-version: ["3.10"]
     steps:
       - name: Check out code from GitHub
         uses: actions/checkout@v3
@@ -20,7 +17,7 @@ jobs:
       - name: Setup python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.10"
 
       - name: Check code formatting with black
         uses: psf/black@stable
@@ -33,9 +30,6 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     name: Run tests
-    strategy:
-      matrix:
-        python-version: ["3.10"]
     steps:
       - name: Check out code from GitHub
         uses: actions/checkout@v3
@@ -43,7 +37,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.10"
 
       - name: Install requirements
         run: python3 -m pip install -r requirements_test.txt
