@@ -184,12 +184,16 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         name="Infoevent",
         icon="mdi:eye",
         entity_category=EntityCategory.DIAGNOSTIC,
+        state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=0,
     ),
     SensorEntityDescription(
         key="113",  # 0x0071
         name="Infoevent counter",
         icon="mdi:eye",
         entity_category=EntityCategory.DIAGNOSTIC,
+        state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=0,
     ),
     SensorEntityDescription(
         key="1001",  # 0x03E9
