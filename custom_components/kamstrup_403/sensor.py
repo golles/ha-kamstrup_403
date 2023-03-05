@@ -183,6 +183,7 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         key="99",  # 0x0063
         name="Infoevent",
         icon="mdi:eye",
+        state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
         suggested_display_precision=0,
     ),
@@ -190,6 +191,7 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         key="113",  # 0x0071
         name="Infoevent counter",
         icon="mdi:eye",
+        state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
         suggested_display_precision=0,
     ),
@@ -197,6 +199,7 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         key="1001",  # 0x03E9
         name="Serial number",
         icon="mdi:barcode",
+        state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
         suggested_display_precision=0,
     ),
