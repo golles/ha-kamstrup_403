@@ -5,7 +5,7 @@ from typing import Final
 # Base component constants
 NAME: Final = "Kamstrup 403"
 DOMAIN: Final = "kamstrup_403"
-VERSION: Final = "2.3.0"
+VERSION: Final = "2.4.0"
 MODEL: Final = "403"
 MANUFACTURER: Final = "Kamstrup"
 ATTRIBUTION: Final = "Data provided by Kamstrup 403 meter"
