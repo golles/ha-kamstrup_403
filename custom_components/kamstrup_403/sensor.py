@@ -200,6 +200,8 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         name="Serial number",
         icon="mdi:barcode",
         entity_category=EntityCategory.DIAGNOSTIC,
+        state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=0,
     ),
     SensorEntityDescription(
         key="1004",  # 0x03EC
