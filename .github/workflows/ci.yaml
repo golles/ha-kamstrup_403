@@ -40,7 +40,9 @@ jobs:
           python-version: "3.10"
 
       - name: Install requirements
-        run: python3 -m pip install -r requirements_test.txt
+        run: |
+          python3 -m pip install -r requirements.txt
+          python3 -m pip install -r requirements_test.txt
 
       - name: Run tests
         run: |
@@ -50,6 +52,7 @@ jobs:
             --durations=10 \
             -n auto \
             --cov custom_components.kamstrup_403 \
+            --cov-report=term \
             --cov-report=xml \
             -o console_output_style=count \
             -p no:sugar \
