@@ -17,8 +17,8 @@ from homeassistant.helpers.typing import StateType
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import dt
 
-from . import KamstrupUpdateCoordinator
 from .const import DEFAULT_NAME, DOMAIN
+from .coordinator import KamstrupUpdateCoordinator
 
 DESCRIPTIONS: list[SensorEntityDescription] = [
     SensorEntityDescription(
@@ -280,7 +280,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up Kamstrup sensors based on a config entry."""
-    coordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator: KamstrupUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
 
     entities: list[KamstrupSensor] = []
 

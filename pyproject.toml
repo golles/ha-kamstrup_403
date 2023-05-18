@@ -1,7 +1,8 @@
 [tool.pytest.ini_options]
+minversion = "6.0"
 testpaths = ["tests"]
 norecursedirs = ".git"
-addopts = "--strict-markers --cov=custom_components"
+addopts = "--timeout=9 --durations=10"
 asyncio_mode = "auto"
 
 [tool.isort]

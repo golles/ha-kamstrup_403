@@ -11,9 +11,6 @@
     },
     "error": {
       "port": "Can't connect to given serial prot."
-    },
-    "abort": {
-      "single_instance_allowed": "Only a single instance is allowed."
     }
   },
   "options": {
