@@ -21,9 +21,9 @@ MULTIPLE_NBR_MAX: int = 8
 class Kamstrup:
     """Kamstrup Meter Protocol (KMP)"""
 
-    def __init__(self, serial_port: str, baudrate: int, timeout: float):
+    def __init__(self, url: str, baudrate: int, timeout: float):
         """Initialize"""
-        self.ser = serial.serial_for_url("socket://irreader1.localdomain:3434", baudrate=baudrate, timeout=timeout)
+        self.ser = serial.serial_for_url(url=url, baudrate=baudrate, timeout=timeout)
 
     @classmethod
     def _crc_1021(cls, message: tuple[int]) -> int:

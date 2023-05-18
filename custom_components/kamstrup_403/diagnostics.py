@@ -3,7 +3,8 @@
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
-from . import DOMAIN, KamstrupUpdateCoordinator
+from .const import DOMAIN
+from .coordinator import KamstrupUpdateCoordinator
 
 
 async def async_get_config_entry_diagnostics(
