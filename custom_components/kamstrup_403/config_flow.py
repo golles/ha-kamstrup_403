@@ -28,7 +28,7 @@ class KamstrupFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             try:
                 Kamstrup(
-                    port=user_input[CONF_PORT],
+                    url=user_input[CONF_PORT],
                     baudrate=DEFAULT_BAUDRATE,
                     timeout=DEFAULT_TIMEOUT,
                 )
