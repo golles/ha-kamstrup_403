@@ -66,6 +66,7 @@ custom_components/kamstrup_403/translations/nl.json
 custom_components/kamstrup_403/__init__.py
 custom_components/kamstrup_403/config_flow.py
 custom_components/kamstrup_403/const.py
+custom_components/kamstrup_403/coordinator.py
 custom_components/kamstrup_403/diagnostics.py
 custom_components/kamstrup_403/manifest.json
 custom_components/kamstrup_403/sensor.py
