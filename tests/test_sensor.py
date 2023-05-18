@@ -1,12 +1,11 @@
 """Tests sensor."""
-from datetime import datetime
+import datetime
 
 from homeassistant.components.sensor import SensorEntityDescription
+from homeassistant.core import HomeAssistant
 from homeassistant.util import dt
-import pytest
-from pytest_homeassistant_custom_component.common import MockConfigEntry
+from pytest_homeassistant_custom_component.common import async_fire_time_changed
 
-from custom_components.kamstrup_403 import async_setup_entry
 from custom_components.kamstrup_403.const import DOMAIN
 from custom_components.kamstrup_403.sensor import (
     KamstrupDateSensor,
@@ -14,14 +13,12 @@ from custom_components.kamstrup_403.sensor import (
     KamstrupMeterSensor,
 )
 
-from .const import MOCK_CONFIG
+from . import setup_component
 
 
-@pytest.fixture
-async def test_kamstrup_gas_sensor(hass, bypass_get_data):
+async def test_kamstrup_gas_sensor(hass: HomeAssistant, bypass_get_data):
     """Test for gas sensor."""
-    config_entry = MockConfigEntry(domain=DOMAIN, data=MOCK_CONFIG, entry_id="test")
-    await async_setup_entry(hass, config_entry)
+    config_entry = await setup_component(hass)
 
     sensor = KamstrupGasSensor(
         hass.data[DOMAIN][config_entry.entry_id],
@@ -35,14 +32,18 @@ async def test_kamstrup_gas_sensor(hass, bypass_get_data):
     # Mock data.
     sensor.coordinator.data[60] = {"value": 1234, "unit": "GJ"}
 
+    async_fire_time_changed(
+        hass,
+        datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(seconds=1),
+    )
+    await hass.async_block_till_done()
+
     assert sensor.state == 1234
 
 
-@pytest.fixture
-async def test_kamstrup_meter_sensor(hass, bypass_get_data):
+async def test_kamstrup_meter_sensor(hass: HomeAssistant, bypass_get_data):
     """Test for base sensor."""
-    config_entry = MockConfigEntry(domain=DOMAIN, data=MOCK_CONFIG, entry_id="test")
-    await async_setup_entry(hass, config_entry)
+    config_entry = await setup_component(hass)
 
     sensor = KamstrupMeterSensor(
         hass.data[DOMAIN][config_entry.entry_id],
@@ -56,16 +57,20 @@ async def test_kamstrup_meter_sensor(hass, bypass_get_data):
     # Mock data.
     sensor.coordinator.data[60] = {"value": 1234, "unit": "GJ"}
 
+    async_fire_time_changed(
+        hass,
+        datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(seconds=1),
+    )
+    await hass.async_block_till_done()
+
     assert sensor.int_key == 60
     assert sensor.state == 1234
     assert sensor.native_unit_of_measurement == "GJ"
 
 
-@pytest.fixture
-async def test_kamstrup_date_sensor(hass, bypass_get_data):
+async def test_kamstrup_date_sensor(hass: HomeAssistant, bypass_get_data):
     """Test for date sensor."""
-    config_entry = MockConfigEntry(domain=DOMAIN, data=MOCK_CONFIG, entry_id="test")
-    await async_setup_entry(hass, config_entry)
+    config_entry = await setup_component(hass)
 
     sensor = KamstrupDateSensor(
         hass.data[DOMAIN][config_entry.entry_id],
@@ -79,6 +84,12 @@ async def test_kamstrup_date_sensor(hass, bypass_get_data):
     # Mock data.
     sensor.coordinator.data[140] = {"value": 230123.0, "unit": "yy:mm:dd"}
 
+    async_fire_time_changed(
+        hass,
+        datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(seconds=1),
+    )
+    await hass.async_block_till_done()
+
     assert sensor.int_key == 140
-    assert sensor.state == dt.as_local(datetime(2023, 1, 23))
+    assert sensor.state == dt.as_local(datetime.datetime(2023, 1, 23))
     assert sensor.native_unit_of_measurement is None

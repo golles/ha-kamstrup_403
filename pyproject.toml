@@ -1,14 +1,9 @@
 [tool.pytest.ini_options]
+minversion = "6.0"
 testpaths = ["tests"]
 norecursedirs = ".git"
-addopts = "--strict-markers --cov=custom_components"
+addopts = "--timeout=9 --durations=10"
 asyncio_mode = "auto"
-filterwarnings = [
-    "error",
-    "ignore::UserWarning",
-    # note the use of single quote below to denote "raw" strings in TOML
-    'ignore:function ham\(\) is deprecated:DeprecationWarning',
-]
 
 [tool.isort]
 # https://github.com/PyCQA/isort/wiki/isort-Settings
