@@ -37,13 +37,11 @@ Kamstrup 602 | Yes | Confirmed in [#10](https://github.com/golles/ha-kamstrup_40
 Kamstrup 603 | Yes | Confirmed in [#18](https://github.com/golles/ha-kamstrup_403/issues/18)
 Kamstrup MC66C | No | Supported in my [old component](https://github.com/golles/Home-Assistant-Sensor-MC66C)
 
-
 ## Installation
 
 ### HACS
 
 This component can easily be installed in your Home Assistant using HACS.
-
 
 ### Manual
 
@@ -72,9 +70,9 @@ custom_components/kamstrup_403/manifest.json
 custom_components/kamstrup_403/sensor.py
 ```
 
-## Configuration is done in the UI
+## Configuration
 
-It's recommended to use devices as `/dev/serial/by-id` and not `/dev/ttyUSB1` as the port. This is because the first example is a stable identifier, while the second can change when USB devices are added or removed, or even when you perform a system reboot.<br>
+Configuration is done in the UI. It's recommended to use devices as `/dev/serial/by-id` and not `/dev/ttyUSB1` as the port. This is because the first example is a stable identifier, while the second can change when USB devices are added or removed, or even when you perform a system reboot.<br>
 The port should look like this: `/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_D307PBVY-if00-port0`.
 
 Some meters contain a battery, and communicating with the meter does impact battery life. By default, this component updates every `3600` seconds (1 hour). This is configurable. Also, since version `2.0.1` you can also configure the serial timeout. The default value is `1.0` seconds, if you get the error `Finished update, No readings from the meter. Please check the IR connection` you can try to increase this value. Fractional numbers are allowed (eg. `0.5`).
@@ -82,31 +80,40 @@ You can do this by pressing `configure` on the Integrations page:
 
 <img width="300" alt="integration" src="https://user-images.githubusercontent.com/2211503/200671075-39c7a812-42a2-4a4d-8934-6ea37517a400.png"> <img width="300" alt="configure" src="https://user-images.githubusercontent.com/2211503/201747344-b019693a-1d88-4ca1-9a28-87fa24992e13.png">
 
+### Sensors
+
+This component comes with many sensors, and most of the sensors are disabled by default. This is to preserve the battery life of the meter, reading data uses an internal battery, so it's advisable to not read too much data too often. If you like, you can enable as many sensors as you want, it's good to keep a good balance between the number of sensors you enable and the configured `Scan interval`.
+Next to that, the component will read up to 8 sensors in one interaction with the meter.
+
 ## Integration in the energy dashboard
 
 This component does support integration into the Home Assitant's energy dashboard.
+
 ### Heat Energy (E1)
+
 This sensor, with unit `GJ`, can since Home Assistant release 2022.11 directly be added to the energy dashboard. It's important to understand that you need to add this in the individual devices section. So not in the electricity or gas section. The devices here will be added on the bottom of your energy dashboard in a horizontal bar graph showing all your devices in `kWh`. This is by design and can't be changed by this component.
 
 ### Heat Energy to Gas
+
 From version `2.0.0` of this component, there is `Heat Energy to Gas` sensor, this is disabled by default and needs to be manually enabled. It's also required to have the `Heat Energy (E1)` sensor enabled for this to work.
 This sensor acts as a `gas` sensor with the `m³` unit and has the same value as `Heat Energy (E1)`. This sensor can be added to the energy dashboard in the gas section. The added value for this is, that you get a better visual representation in the energy dashboard, eg hourly graphs.
 
 ## Collect logs
 
 When you want to report an issue, please add logs from this component. You can enable logging for this component by configuring the logger in Home Assistant as follows:
+
 ```yaml
 logger:
   default: warn
   logs:
     custom_components.kamstrup_403: debug
 ```
+
 More info can be found on the [Home Assistant logger integration page](https://www.home-assistant.io/integrations/logger)
 
 ## Contributions are welcome!
 
 If you want to contribute to this please read the [Contribution guidelines](CONTRIBUTING.md)
-
 
 [buymecoffee]: https://www.buymeacoffee.com/golles
 [buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
