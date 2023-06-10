@@ -35,5 +35,9 @@
   "[yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "cSpell.words": ["baudrate", "hass", "homeassistant", "kamstrup"]
+  "cSpell.words": ["baudrate", "hass", "homeassistant", "kamstrup"],
+  "sonarlint.connectedMode.project": {
+    "connectionId": "golles",
+    "projectKey": "golles_kamstrup_403"
+  }
 }
