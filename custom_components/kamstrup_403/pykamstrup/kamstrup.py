@@ -42,14 +42,9 @@ class Kamstrup:
                     reg ^= poly
         return reg
 
-    def _debug(self, msg, byte_array: bytearray):
-        """Log bytes to the logger"""
-        _LOGGER.debug("%s %s", msg, byte_array)
-
     def _write(self, data: tuple[int]):
         """Write directly to the meter"""
         bytearray_data = bytearray(data)
-        self._debug("Write", bytearray_data)
         self.ser.write(bytearray_data)
 
     def _read(self) -> int | None:
@@ -59,7 +54,6 @@ class Kamstrup:
             _LOGGER.debug("Rx Timeout")
             return None
         bytearray_data = bytearray(data)
-        self._debug("Read", bytearray_data[0])
         return bytearray_data[0]
 
     def _send(self, pfx: int, message: tuple[int]):
