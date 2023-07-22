@@ -21,3 +21,23 @@ async def test_command_list(hass: HomeAssistant, bypass_get_data):
 
     coordinator.unregister_command(22)
     assert len(coordinator.commands) == len(DEFAULT_ENABLED_COMMANDS)
+
+
+async def test_failed_readings_log(hass: HomeAssistant, bypass_get_data, caplog):
+    """Test command list and register/unregister methods."""
+    config_entry = await setup_component(hass)
+
+    coordinator: KamstrupUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id]
+
+    assert coordinator.commands == DEFAULT_ENABLED_COMMANDS
+
+    assert "No value for sensor 60" in caplog.text
+    assert "No value for sensor 68" in caplog.text
+    assert "No value for sensor 99" in caplog.text
+    assert "No value for sensor 113" in caplog.text
+    assert "No value for sensor 1001" in caplog.text
+    assert "No value for sensor 1004" in caplog.text
+    assert (
+        "Finished update, No readings from the meter. Please check the IR connection"
+        in caplog.text
+    )
