@@ -83,10 +83,11 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator):
                     _LOGGER.debug(
                         "New value for sensor %s, value: %s %s", command, value, unit
                     )
+                else:
+                    _LOGGER.debug("No value for sensor %s", command)
+                    failed_counter += 1
 
-            failed_counter += len(chunk) - len(values)
-
-        if failed_counter == len(data):
+        if failed_counter == len(self._commands):
             _LOGGER.error(
                 "Finished update, No readings from the meter. Please check the IR connection"
             )
@@ -94,7 +95,7 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator):
             _LOGGER.debug(
                 "Finished update, %s out of %s readings failed",
                 failed_counter,
-                len(data),
+                len(self._commands),
             )
 
         return data
