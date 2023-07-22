@@ -31,12 +31,9 @@ async def test_failed_readings_log(hass: HomeAssistant, bypass_get_data, caplog)
 
     assert coordinator.commands == DEFAULT_ENABLED_COMMANDS
 
-    assert "No value for sensor 60" in caplog.text
-    assert "No value for sensor 68" in caplog.text
-    assert "No value for sensor 99" in caplog.text
-    assert "No value for sensor 113" in caplog.text
-    assert "No value for sensor 1001" in caplog.text
-    assert "No value for sensor 1004" in caplog.text
+    for command in DEFAULT_ENABLED_COMMANDS:
+        assert "No value for sensor " + str(command) in caplog.text
+
     assert (
         "Finished update, No readings from the meter. Please check the IR connection"
         in caplog.text
