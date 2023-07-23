@@ -24,7 +24,7 @@ async def test_command_list(hass: HomeAssistant, bypass_get_data):
 
 
 async def test_failed_readings_log(hass: HomeAssistant, bypass_get_data, caplog):
-    """Test command list and register/unregister methods."""
+    """Test logs from failed readings."""
     config_entry = await setup_component(hass)
 
     coordinator: KamstrupUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id]
