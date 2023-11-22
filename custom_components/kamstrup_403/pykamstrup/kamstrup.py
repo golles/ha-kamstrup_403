@@ -23,7 +23,10 @@ class Kamstrup:
 
     def __init__(self, url: str, baudrate: int, timeout: float):
         """Initialize"""
-        self.ser = serial.serial_for_url(url=url, baudrate=baudrate, timeout=timeout)
+        self._url = url
+        self._baudrate = baudrate
+        self._timeout = timeout
+        self.ser = serial.serial_for_url(url=self._url, baudrate=self._baudrate, timeout=self._timeout)
 
     @classmethod
     def _crc_1021(cls, message: tuple[int]) -> int:
@@ -45,11 +48,17 @@ class Kamstrup:
     def _write(self, data: tuple[int]):
         """Write directly to the meter"""
         bytearray_data = bytearray(data)
-        self.ser.write(bytearray_data)
+        try:
+            self.ser.write(bytearray_data)
+        except serial.SerialException:
+            self.ser = serial.serial_for_url(url=self._url, baudrate=self._baudrate, timeout=self._timeout)
 
     def _read(self) -> int | None:
         """Read directly from the meter"""
-        data = self.ser.read(1)
+        try:
+            data = self.ser.read(1)
+        except serial.SerialException:
+            return None
         if len(data) == 0:
             _LOGGER.debug("Rx Timeout")
             return None
@@ -85,6 +94,7 @@ class Kamstrup:
         while True:
             data = self._read()
             if data is None:
+                self.ser = serial.serial_for_url(url=self._url, baudrate=self._baudrate, timeout=self._timeout)
                 return None
             if data == 0x40:
                 bytearray_data = bytearray()
