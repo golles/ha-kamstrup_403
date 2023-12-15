@@ -9,9 +9,6 @@
   "terminal.integrated.defaultProfile.linux": "zsh",
   "python.testing.pytestEnabled": true,
   "python.analysis.autoSearchPaths": false,
-  "python.linting.pylintEnabled": true,
-  "python.linting.enabled": true,
-  "python.formatting.provider": "black",
   "editor.formatOnPaste": false,
   "editor.formatOnSave": true,
   "editor.formatOnType": true,
@@ -30,7 +27,10 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[python]": {
-    "editor.defaultFormatter": "ms-python.black-formatter"
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
   },
   "[yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
