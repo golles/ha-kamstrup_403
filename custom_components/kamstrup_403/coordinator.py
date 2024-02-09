@@ -1,4 +1,5 @@
 """DataUpdateCoordinator for kamstrup_403."""
+
 import logging
 from typing import Any, List
 
