@@ -1,4 +1,5 @@
 """Sensor platform for kamstrup_403."""
+
 from datetime import datetime
 
 from homeassistant.components.sensor import (

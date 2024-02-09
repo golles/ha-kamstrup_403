@@ -1,4 +1,5 @@
 """Adds config flow for Kamstrup 403."""
+
 import logging
 
 from homeassistant import config_entries

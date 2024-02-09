@@ -1,4 +1,5 @@
 """Tests sensor."""
+
 import datetime
 
 from homeassistant.components.sensor import SensorEntityDescription

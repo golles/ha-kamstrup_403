@@ -1,4 +1,5 @@
 """Tests for kamstrup_403 coordinator."""
+
 from homeassistant.core import HomeAssistant
 
 from custom_components.kamstrup_403.const import DOMAIN
