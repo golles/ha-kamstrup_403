@@ -1,5 +1,2 @@
-pip>=21.0,<24.1
-colorlog
-isort
-homeassistant
+homeassistant>=2023.6.0
 pyserial==3.5
