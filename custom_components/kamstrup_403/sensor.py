@@ -30,6 +30,14 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     SensorEntityDescription(
+        key="63",  # 0x003F
+        name="Cooling Energy (E3)",
+        icon="mdi:snowflake",
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        entity_registry_enabled_default=False,
+    ),
+    SensorEntityDescription(
         key="80",  # 0x0050
         name="Power",
         icon="mdi:flash",
