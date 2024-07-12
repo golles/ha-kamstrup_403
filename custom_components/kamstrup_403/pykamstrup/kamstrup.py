@@ -48,14 +48,20 @@ class Kamstrup:
             log += f" {byte:02x}"
         _LOGGER.debug(log)
 
+    def _make_sure_port_is_opened(self):
+        if not self.ser.is_open:
+            self.ser.open()
+
     def _write(self, data: tuple[int]):
         """Write directly to the meter"""
+        self._make_sure_port_is_opened()
         bytearray_data = bytearray(data)
         self._debug("Write", bytearray_data)
         self.ser.write(bytearray_data)
 
     def _read(self) -> int | None:
         """Read directly from the meter"""
+        self._make_sure_port_is_opened()
         data = self.ser.read(1)
         if len(data) == 0:
             _LOGGER.debug("Rx Timeout")
