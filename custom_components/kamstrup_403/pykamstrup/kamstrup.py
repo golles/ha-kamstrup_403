@@ -105,7 +105,6 @@ class Kamstrup:
         while True:
             data = self._read()
             if data is None:
-                self.ser = serial.serial_for_url(url=self._url, baudrate=self._baudrate, timeout=self._timeout)
                 return None
             if data == 0x40:
                 bytearray_data = bytearray()
