@@ -73,7 +73,7 @@ class Kamstrup:
             _LOGGER.debug("Rx Timeout")
             return None
         bytearray_data = bytearray(data)
-        self._debug("Read", bytearray((bytearray_data)))
+        self._debug("Read", bytearray(bytearray_data))
         return bytearray_data[0]
 
     def _send(self, pfx: int, message: tuple[int]):
