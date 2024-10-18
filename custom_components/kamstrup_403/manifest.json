@@ -7,5 +7,5 @@
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/golles/ha-kamstrup_403/issues",
   "requirements": ["pyserial==3.5"],
-  "version": "2.6.0"
+  "version": "2.6.3"
 }

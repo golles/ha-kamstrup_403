@@ -1,4 +1,5 @@
 """Constants for kamstrup_403 tests."""
+
 from homeassistant.const import CONF_PORT, CONF_SCAN_INTERVAL, CONF_TIMEOUT
 
 # Mock config data to be used across multiple tests

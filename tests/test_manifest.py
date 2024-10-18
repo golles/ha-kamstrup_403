@@ -1,4 +1,5 @@
 """Test for versions."""
+
 import json
 
 from custom_components.kamstrup_403.const import DOMAIN, NAME, VERSION

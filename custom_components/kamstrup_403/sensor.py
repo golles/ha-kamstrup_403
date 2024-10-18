@@ -1,4 +1,5 @@
 """Sensor platform for kamstrup_403."""
+
 from datetime import datetime
 
 from homeassistant.components.sensor import (
@@ -9,7 +10,7 @@ from homeassistant.components.sensor import (
     SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import VOLUME_CUBIC_METERS
+from homeassistant.const import UnitOfVolume
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -27,6 +28,14 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         icon="mdi:radiator",
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
+    ),
+    SensorEntityDescription(
+        key="63",  # 0x003F
+        name="Cooling Energy (E3)",
+        icon="mdi:snowflake",
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        entity_registry_enabled_default=False,
     ),
     SensorEntityDescription(
         key="80",  # 0x0050
@@ -313,7 +322,7 @@ async def async_setup_entry(
                 key="gas",
                 name="Heat Energy to Gas",
                 icon="mdi:gas-burner",
-                native_unit_of_measurement=VOLUME_CUBIC_METERS,
+                native_unit_of_measurement=UnitOfVolume.CUBIC_METERS,
                 device_class=SensorDeviceClass.GAS,
                 state_class=SensorStateClass.TOTAL_INCREASING,
                 entity_registry_enabled_default=False,

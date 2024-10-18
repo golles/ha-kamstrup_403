@@ -4,6 +4,7 @@ Custom integration to integrate kamstrup_403 with Home Assistant.
 For more details about this integration, please refer to
 https://github.com/custom-components/kamstrup_403
 """
+
 from datetime import timedelta
 import logging
 
@@ -83,5 +84,4 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Reload config entry."""
-    await async_unload_entry(hass, entry)
-    await async_setup_entry(hass, entry)
+    await hass.config_entries.async_reload(entry.entry_id)

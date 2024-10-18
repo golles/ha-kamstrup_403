@@ -45,24 +45,35 @@ class Kamstrup:
                     reg ^= poly
         return reg
 
+    def _debug(self, msg: str, byte_array: bytearray):
+        log = f"{msg}:"
+        for byte in byte_array:
+            log += f" {byte:02x}"
+        _LOGGER.debug(log)
+
+    def _make_sure_port_is_opened(self):
+        if not self.ser.is_open:
+            self.ser.open()
+
     def _write(self, data: tuple[int]):
         """Write directly to the meter"""
+        self._make_sure_port_is_opened()
         bytearray_data = bytearray(data)
         try:
+            self._debug("Write", bytearray_data)
             self.ser.write(bytearray_data)
         except serial.SerialException:
             self.ser = serial.serial_for_url(url=self._url, baudrate=self._baudrate, timeout=self._timeout)
 
     def _read(self) -> int | None:
         """Read directly from the meter"""
-        try:
-            data = self.ser.read(1)
-        except serial.SerialException:
-            return None
+        self._make_sure_port_is_opened()
+        data = self.ser.read(1)
         if len(data) == 0:
             _LOGGER.debug("Rx Timeout")
             return None
         bytearray_data = bytearray(data)
+        self._debug("Read", bytearray((bytearray_data)))
         return bytearray_data[0]
 
     def _send(self, pfx: int, message: tuple[int]):

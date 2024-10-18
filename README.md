@@ -6,7 +6,7 @@
 [![GitHub Activity][commits-shield]][commits]
 [![Code coverage][codecov-shield]][codecov]
 [![hacs][hacs-shield]][hacs]
-[![hacs][hacs-installs-shield]][hacs]
+[![installs][hacs-installs-shield]][ha-active-installation-badges]
 [![Project Maintenance][maintenance-shield]][maintainer]
 [![BuyMeCoffee][buymecoffeebadge]][buymecoffee]
 
@@ -73,7 +73,7 @@ custom_components/kamstrup_403/sensor.py
 ## Configuration
 
 Configuration is done in the UI. It's recommended to use devices as `/dev/serial/by-id` and not `/dev/ttyUSB1` as the port. This is because the first example is a stable identifier, while the second can change when USB devices are added or removed, or even when you perform a system reboot.<br>
-The port should look like this: `/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_D307PBVY-if00-port0`.
+The port should look like this: `/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_D307PBVY-if00-port0`. If the port is a remote port (e.g. by using ser2net) it's possible to use a socket connection too, by using something similar to `socket://192.168.1.101:20019`.
 
 Some meters contain a battery, and communicating with the meter does impact battery life. By default, this component updates every `3600` seconds (1 hour). This is configurable. Also, since version `2.0.1` you can also configure the serial timeout. The default value is `1.0` seconds, if you get the error `Finished update, No readings from the meter. Please check the IR connection` you can try to increase this value. Fractional numbers are allowed (eg. `0.5`).
 You can do this by pressing `configure` on the Integrations page:
@@ -123,7 +123,8 @@ If you want to contribute to this please read the [Contribution guidelines](CONT
 [commits]: https://github.com/golles/ha-kamstrup_403/commits/main
 [hacs]: https://github.com/hacs/integration
 [hacs-shield]: https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge
-[hacs-installs-shield]: https://raw.githubusercontent.com/golles/ha-active-installation-badges/main/kamstrup_403.svg
+[ha-active-installation-badges]: https://github.com/golles/ha-active-installation-badges
+[hacs-installs-shield]: https://raw.githubusercontent.com/golles/ha-active-installation-badges/main/badges/kamstrup_403.svg
 [license-shield]: https://img.shields.io/github/license/golles/ha-kamstrup_403.svg?style=for-the-badge
 [maintainer]: https://github.com/golles
 [maintenance-shield]: https://img.shields.io/badge/maintainer-golles-blue.svg?style=for-the-badge
