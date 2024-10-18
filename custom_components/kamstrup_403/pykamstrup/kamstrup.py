@@ -26,7 +26,9 @@ class Kamstrup:
         self._url = url
         self._baudrate = baudrate
         self._timeout = timeout
-        self.ser = serial.serial_for_url(url=self._url, baudrate=self._baudrate, timeout=self._timeout)
+        self.ser = serial.serial_for_url(
+            url=self._url, baudrate=self._baudrate, timeout=self._timeout
+        )
 
     @classmethod
     def _crc_1021(cls, message: tuple[int]) -> int:
@@ -63,7 +65,9 @@ class Kamstrup:
             self._debug("Write", bytearray_data)
             self.ser.write(bytearray_data)
         except serial.SerialException:
-            self.ser = serial.serial_for_url(url=self._url, baudrate=self._baudrate, timeout=self._timeout)
+            self.ser = serial.serial_for_url(
+                url=self._url, baudrate=self._baudrate, timeout=self._timeout
+            )
 
     def _read(self) -> int | None:
         """Read directly from the meter"""
