@@ -31,7 +31,6 @@ This component is created to only support the Kamstrup 403 meter. This is a cons
 Meter | Supported | Description
 -- | -- | --
 Kamstrup 403 | Yes |
-Kamstrup 302 | Yes | Confirmed by email
 Kamstrup 402 | Yes | Confirmed in [#14](https://github.com/golles/ha-kamstrup_403/issues/27)
 Kamstrup 601 | Yes | Confirmed in [#14](https://github.com/golles/ha-kamstrup_403/issues/14)
 Kamstrup 602 | Yes | Confirmed in [#10](https://github.com/golles/ha-kamstrup_403/issues/10)
