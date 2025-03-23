@@ -33,7 +33,7 @@ body:
       required: true
     attributes:
       label: Integration version
-      placeholder: "2.6.3"
+      placeholder: "2.6.4"
       description: >
         Can be found in the Configuration panel -> Integrations -> Kamstrup 403
 
