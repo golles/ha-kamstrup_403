@@ -15,7 +15,7 @@
   },
   "options": {
     "step": {
-      "user": {
+      "init": {
         "data": {
           "scan_interval": "Scan interval (seconds)",
           "timeout": "Serial read timeout (seconds)"

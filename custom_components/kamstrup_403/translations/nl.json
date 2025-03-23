@@ -15,7 +15,7 @@
   },
   "options": {
     "step": {
-      "user": {
+      "init": {
         "data": {
           "scan_interval": "Scaninterval (seconden)",
           "timeout": "Time-out voor serieel lezen (seconden)"
