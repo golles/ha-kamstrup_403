@@ -1,9 +1,14 @@
 """Adds config flow for Kamstrup 403."""
 
 import logging
+from typing import Any
 
-from homeassistant import config_entries
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import (
+    ConfigEntry,
+    ConfigFlow,
+    FlowResult,
+    OptionsFlow,
+)
 from homeassistant.const import CONF_PORT, CONF_SCAN_INTERVAL, CONF_TIMEOUT
 from homeassistant.core import callback
 import voluptuous as vol
@@ -14,15 +19,14 @@ from .pykamstrup.kamstrup import Kamstrup
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
-class KamstrupFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+class KamstrupFlowHandler(ConfigFlow, domain=DOMAIN):
     """Config flow for Kamstrup 403."""
 
     VERSION = 1
 
     async def async_step_user(
-        self,
-        user_input: dict | None = None,
-    ) -> config_entries.FlowResult:
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
         """Handle a flow initialized by the user."""
         _errors = {}
 
@@ -53,30 +57,24 @@ class KamstrupFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     @staticmethod
     @callback
-    def async_get_options_flow(config_entry):
-        return KamstrupOptionsFlowHandler(config_entry)
+    def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlow:
+        return KamstrupOptionsFlowHandler()
 
 
-class KamstrupOptionsFlowHandler(config_entries.OptionsFlow):
+class KamstrupOptionsFlowHandler(OptionsFlow):
     """Kamstrup config flow options handler."""
 
-    def __init__(self, config_entry: ConfigEntry):
-        """Initialize options flow."""
-        self.config_entry = config_entry
-        self.options = dict(config_entry.options)
-
-    async def async_step_init(self, user_input=None):  # pylint: disable=unused-argument
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
         """Manage the options."""
-        return await self.async_step_user()
-
-    async def async_step_user(self, user_input=None):
-        """Handle a flow initialized by the user."""
         if user_input is not None:
-            self.options.update(user_input)
-            return await self._update_options()
+            return self.async_create_entry(
+                title=self.config_entry.data.get(CONF_PORT), data=user_input
+            )
 
         return self.async_show_form(
-            step_id="user",
+            step_id="init",
             data_schema=vol.Schema(
                 {
                     vol.Required(
@@ -93,10 +91,4 @@ class KamstrupOptionsFlowHandler(config_entries.OptionsFlow):
                     ): vol.All(vol.Coerce(float), vol.Range(min=0.0, max=5.0)),
                 }
             ),
-        )
-
-    async def _update_options(self):
-        """Update config entry options."""
-        return self.async_create_entry(
-            title=self.config_entry.data.get(CONF_PORT), data=self.options
         )
