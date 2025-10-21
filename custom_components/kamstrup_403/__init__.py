@@ -1,28 +1,18 @@
-"""
-Custom integration to integrate kamstrup_403 with Home Assistant.
+"""Custom integration to integrate kamstrup_403 with Home Assistant.
 
 For more details about this integration, please refer to
 https://github.com/custom-components/kamstrup_403
 """
 
-from datetime import timedelta
 import logging
+from datetime import timedelta
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PORT, CONF_SCAN_INTERVAL, CONF_TIMEOUT, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
-from homeassistant.helpers.device_registry import DeviceEntryType
-from homeassistant.helpers.entity import DeviceInfo
 
-from .const import (
-    DEFAULT_BAUDRATE,
-    DEFAULT_SCAN_INTERVAL,
-    DEFAULT_TIMEOUT,
-    DOMAIN,
-    NAME,
-    VERSION,
-)
+from .const import DEFAULT_BAUDRATE, DEFAULT_SCAN_INTERVAL, DEFAULT_TIMEOUT, DOMAIN
 from .coordinator import KamstrupUpdateCoordinator
 from .pykamstrup.kamstrup import Kamstrup
 
@@ -34,14 +24,18 @@ PLATFORMS: list[Platform] = [
 ]
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry[KamstrupUpdateCoordinator]) -> bool:
     """Set up this integration using UI."""
     hass.data.setdefault(DOMAIN, {})
 
-    port = entry.data.get(CONF_PORT)
-    scan_interval_seconds = entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
+    port = config_entry.data.get(CONF_PORT)
+    scan_interval_seconds = config_entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
     scan_interval = timedelta(seconds=scan_interval_seconds)
-    timeout_seconds = entry.options.get(CONF_TIMEOUT, DEFAULT_TIMEOUT)
+    timeout_seconds = config_entry.options.get(CONF_TIMEOUT, DEFAULT_TIMEOUT)
+
+    if not port:
+        msg = "Missing required configuration options: port."
+        raise ValueError(msg)
 
     _LOGGER.debug(
         "Set up entry, with scan_interval of %s seconds and timeout of %s seconds",
@@ -52,36 +46,29 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     try:
         client = Kamstrup(url=port, baudrate=DEFAULT_BAUDRATE, timeout=timeout_seconds)
     except Exception as exception:
-        _LOGGER.error("Can't establish a connection to %s", port)
-        raise ConfigEntryNotReady() from exception
+        _LOGGER.warning("Can't establish a connection to %s", port)
+        raise ConfigEntryNotReady from exception
 
-    device_info = DeviceInfo(
-        entry_type=DeviceEntryType.SERVICE,
-        identifiers={(DOMAIN, port)},
-        manufacturer=NAME,
-        name=NAME,
-        model=VERSION,
+    config_entry.runtime_data = coordinator = KamstrupUpdateCoordinator(
+        hass=hass,
+        client=client,
+        scan_interval=scan_interval,
     )
 
-    hass.data[DOMAIN][entry.entry_id] = coordinator = KamstrupUpdateCoordinator(
-        hass=hass, client=client, scan_interval=scan_interval, device_info=device_info
-    )
-
-    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
     await coordinator.async_config_entry_first_refresh()
 
-    entry.async_on_unload(entry.add_update_listener(async_reload_entry))
+    config_entry.async_on_unload(config_entry.add_update_listener(async_reload_entry))
 
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Handle removal of an entry."""
-    if unloaded := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
-        hass.data[DOMAIN].pop(entry.entry_id)
-    return unloaded
+async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry[KamstrupUpdateCoordinator]) -> bool:
+    """Unload a config entry."""
+    return await hass.config_entries.async_unload_platforms(config_entry, PLATFORMS)
 
 
-async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
+async def async_reload_entry(hass: HomeAssistant, config_entry: ConfigEntry[KamstrupUpdateCoordinator]) -> None:
     """Reload config entry."""
-    await hass.config_entries.async_reload(entry.entry_id)
+    await async_unload_entry(hass, config_entry)
+    await async_setup_entry(hass, config_entry)

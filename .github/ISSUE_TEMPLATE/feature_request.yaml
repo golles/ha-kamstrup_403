@@ -1,24 +1,14 @@
 name: Feature request
-description: Suggest an idea for this project, no need to request ESP(Home), MQTT, or Ser2Net features, those are out of scope
+description: Suggest an idea for this project
 labels: [enhancement]
 body:
-  - type: checkboxes
-    id: terms
-    attributes:
-      label: Did you read the instructions?
-      description: Please read the instructions carefully, thank you.
-      options:
-        - label: I have read the [README](../blob/master/README.md).
-          required: true
-
   - type: textarea
     validations:
       required: true
     attributes:
       label: The request
       description: >-
-        Describe your feature request here to communicate to the
-        maintainers. Tell us what you were trying to do and why.
+        Describe your feature request here to communicate to the maintainers. Tell us what you were trying to do and why.
 
         Provide a clear and concise description of what the feature request is. What would you like to happen?
 
@@ -31,7 +21,8 @@ body:
     id: additional-information
     attributes:
       label: Additional information
-      description: If you have any additional information for us, use the field below. Please note, you can attach screenshots or screen recordings here, by dragging and dropping files in the field below.
+      description: >-
+        If you have any additional information for us, use the field below. Please note, you can attach screenshots or screen recordings here, by dragging and dropping files in the field below.
 
   - type: markdown
     attributes:
