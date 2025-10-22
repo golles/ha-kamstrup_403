@@ -1,9 +1,11 @@
 """Tests for sensor."""
 
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, patch
+from zoneinfo import ZoneInfo
 
 import pytest
 from homeassistant.core import HomeAssistant
+from homeassistant.util import dt as dt_util
 
 from custom_components.kamstrup_403.sensor import DESCRIPTIONS, KamstrupSensor
 
@@ -20,7 +22,6 @@ from . import get_mock_config_entry, setup_integration, unload_integration
         ("sensor.kamstrup_403_infoevent_counter", "1", None),
         ("sensor.kamstrup_403_serial_number", "12345678", None),
         ("sensor.kamstrup_403_hourcounter", "12345.0", None),
-        ("sensor.kamstrup_403_minflowdate_m", "2023-01-23T00:00:00+00:00", None),
     ],
 )
 async def test_state(hass: HomeAssistant, entity: str, value: str, unit_of_measurement: str | None) -> None:
@@ -34,6 +35,34 @@ async def test_state(hass: HomeAssistant, entity: str, value: str, unit_of_measu
         assert state.attributes.get("unit_of_measurement") == unit_of_measurement
 
     await unload_integration(hass, config_entry)
+
+
+@pytest.mark.parametrize(
+    ("timezone_name", "expected_utc_time"),
+    [
+        ("UTC", "2023-01-23T00:00:00+00:00"),
+        ("US/Pacific", "2023-01-23T08:00:00+00:00"),  # PST = UTC-8, so local midnight becomes 08:00 UTC
+        ("Europe/London", "2023-01-23T00:00:00+00:00"),  # GMT = UTC in January
+        ("Europe/Amsterdam", "2023-01-22T23:00:00+00:00"),  # CET = UTC+1, so local midnight becomes 23:00 UTC previous day
+    ],
+)
+async def test_date_sensor_timezone_handling(hass: HomeAssistant, mock_kamstrup: AsyncMock, timezone_name: str, expected_utc_time: str) -> None:
+    """Test that KamstrupDateSensor handles timezones correctly regardless of system timezone."""
+    # Configure the mock to return a date value
+    mock_kamstrup.get_values.return_value = {
+        140: (230123.0, "yy:mm:dd"),  # MinFlowDate_M = January 23, 2023
+    }
+
+    # Mock the Home Assistant timezone to simulate different environments
+    with patch.object(dt_util, "get_default_time_zone", return_value=ZoneInfo(timezone_name)):
+        config_entry = await setup_integration(hass)
+
+        # Test the date sensor
+        state = hass.states.get("sensor.kamstrup_403_minflowdate_m")
+        assert state
+        assert state.state == expected_utc_time
+
+        await unload_integration(hass, config_entry)
 
 
 async def test_native_value_returns_none_when_no_data(hass: HomeAssistant, mock_kamstrup: AsyncMock) -> None:
@@ -77,7 +106,7 @@ def test_native_value_method_directly_when_no_data() -> None:
     # Create sensor instance directly (not through integration)
     sensor = KamstrupSensor(mock_coordinator, get_mock_config_entry(), DESCRIPTIONS[0])
 
-    # Test native_value directly - this should hit line 364: return None
+    # Test native_value directly
     result = sensor.native_value
     assert result is None
 
