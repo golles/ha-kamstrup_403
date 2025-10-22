@@ -1,6 +1,6 @@
 """Sensor platform for kamstrup_403."""
 
-from datetime import UTC, datetime
+from datetime import datetime
 
 from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorEntityDescription, SensorStateClass
@@ -12,6 +12,7 @@ from homeassistant.helpers.entity import DeviceInfo, EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.util import dt as dt_util
 
 from .const import DEFAULT_NAME, DOMAIN, MANUFACTURER, MODEL, NAME
 from .coordinator import KamstrupUpdateCoordinator
@@ -428,10 +429,10 @@ class KamstrupDateSensor(KamstrupMeterSensor):
         """Convert a meter value to a datetime object.
 
         The value from the meter could be "230101.0" (yymmdd as float).
-        The returned datetime is in UTC.
+        The meter returns dates in the local timezone.
         """
         string = str(int(value))  # Removes any decimals and convert to string for strptime.
-        return datetime.strptime(string, "%y%m%d").replace(tzinfo=UTC)
+        return datetime.strptime(string, "%y%m%d").replace(tzinfo=dt_util.get_default_time_zone())
 
 
 class KamstrupGasSensor(KamstrupSensor):
