@@ -1,2 +1,0 @@
-homeassistant>=2023.6.0
-pyserial==3.5

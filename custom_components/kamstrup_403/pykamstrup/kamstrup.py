@@ -1,4 +1,4 @@
-"""Kamstrup Meter Protocol (KMP)"""
+"""Kamstrup Meter Protocol (KMP)."""
 
 # ----------------------------------------------------------------------------
 # "THE BEER-WARE LICENSE" (Revision 42):
@@ -19,15 +19,17 @@ MULTIPLE_NBR_MAX: int = 8
 
 
 class Kamstrup:
-    """Kamstrup Meter Protocol (KMP)"""
+    """Kamstrup Meter Protocol (KMP)."""
 
-    def __init__(self, url: str, baudrate: int, timeout: float):
-        """Initialize"""
+    ser: serial.Serial
+
+    def __init__(self, url: str, baudrate: int, timeout: float) -> None:
+        """Initialize."""
         self.ser = serial.serial_for_url(url=url, baudrate=baudrate, timeout=timeout)
 
     @classmethod
-    def _crc_1021(cls, message: tuple[int]) -> int:
-        """Kamstrup uses the "true" CCITT CRC-16"""
+    def _crc_1021(cls, message: tuple[int, ...]) -> int:
+        """Kamstrup uses the "true" CCITT CRC-16."""
         poly = 0x1021
         reg = 0x0000
         for byte in message:
@@ -42,75 +44,78 @@ class Kamstrup:
                     reg ^= poly
         return reg
 
-    def _debug(self, msg: str, byte_array: bytearray):
+    def _debug(self, msg: str, byte_array: bytearray) -> None:
+        """Log a debug message with a byte array."""
         log = f"{msg}:"
         for byte in byte_array:
             log += f" {byte:02x}"
         _LOGGER.debug(log)
 
-    def _make_sure_port_is_opened(self):
+    def _make_sure_port_is_opened(self) -> None:
+        """Make sure the serial port is opened."""
         if not self.ser.is_open:
             self.ser.open()
 
-    def _write(self, data: tuple[int]):
-        """Write directly to the meter"""
+    def _write(self, data: tuple[int, ...]) -> None:
+        """Write directly to the meter."""
         self._make_sure_port_is_opened()
         bytearray_data = bytearray(data)
         self._debug("Write", bytearray_data)
         self.ser.write(bytearray_data)
 
     def _read(self) -> int | None:
-        """Read directly from the meter"""
+        """Read directly from the meter."""
         self._make_sure_port_is_opened()
         data = self.ser.read(1)
         if len(data) == 0:
             _LOGGER.debug("Rx Timeout")
             return None
         bytearray_data = bytearray(data)
-        self._debug("Read", bytearray((bytearray_data)))
+        self._debug("Read", bytearray(bytearray_data))
         return bytearray_data[0]
 
-    def _send(self, pfx: int, message: tuple[int]):
-        """Construct the message and send to the meter"""
+    def _send(self, pfx: int, message: tuple[int, ...]) -> None:
+        """Construct the message and send to the meter."""
         bytearray_data = bytearray(message)
-
         bytearray_data.append(0)
         bytearray_data.append(0)
-        data = self._crc_1021(bytearray_data)
-        bytearray_data[-2] = data >> 8
-        bytearray_data[-1] = data & 0xFF
+        crc = self._crc_1021(tuple(bytearray_data))
+        bytearray_data[-2] = crc >> 8
+        bytearray_data[-1] = crc & 0xFF
 
-        data = bytearray()
-        data.append(pfx)
+        send_data = [pfx]
         for i in bytearray_data:
             if i in ESCAPES:
-                data.append(0x1B)
-                data.append(i ^ 0xFF)
+                send_data.append(0x1B)
+                send_data.append(i ^ 0xFF)
             else:
-                data.append(i)
-        data.append(0x0D)
-        self._write(data)
+                send_data.append(i)
+        send_data.append(0x0D)
+        self._write(tuple(send_data))
 
     def _receive(self) -> bytearray | None:
-        """Receive data"""
+        """Receive data."""
         # Skip first response, which is repetition of initial command,
         # only break on 0x0d if it comes after 0x40.
         bytearray_data = None
+        resp_start = 0x40
+        resp_end = 0x0D
         while True:
             data = self._read()
             if data is None:
                 return None
-            if data == 0x40:
+            if data == resp_start:
                 bytearray_data = bytearray()
             if bytearray_data is not None:
                 bytearray_data.append(data)
-                if data == 0x0D:
+                if data == resp_end:
                     break
 
+        escape_byte = 0x1B
         response_data = bytearray()
         i = 1
         while i < len(bytearray_data) - 1:
-            if bytearray_data[i] == 0x1B:
+            if bytearray_data[i] == escape_byte:
                 value = bytearray_data[i + 1] ^ 0xFF
                 if value not in ESCAPES:
                     _LOGGER.debug("Missing Escape %02x", value)
@@ -119,61 +124,54 @@ class Kamstrup:
             else:
                 response_data.append(bytearray_data[i])
                 i += 1
-        if self._crc_1021(response_data):
+        if self._crc_1021(tuple(response_data)):
             _LOGGER.debug("CRC error")
         return response_data[:-2]
 
     @classmethod
-    def _process_response(cls, nbr: int, data):
-        """Process a response"""
+    def _process_response(cls, nbr: int, data: bytearray) -> tuple[float | None, str | None]:
+        """Process a response."""
         if data[0] != nbr >> 8 or data[1] != nbr & 0xFF:
             _LOGGER.debug("NBR error")
             return (None, None)
 
-        if data[2] in UNITS:
-            unit = UNITS[data[2]]
-        else:
-            unit = None
+        unit = UNITS.get(data[2], None)
 
         # Decode the mantissa.
-        value = 0
-        for i in range(0, data[3]):
-            value <<= 8
-            value |= data[i + 5]
+        value: float = 0.0
+        for i in range(data[3]):
+            value = (value * 256) + data[i + 5]
 
         # Decode the exponent.
-        i = data[4] & 0x3F
+        exp_val = data[4] & 0x3F
         if data[4] & 0x40:
-            i = -i
-        i = math.pow(10, i)
+            exp_val = -exp_val
+        exp = math.pow(10, exp_val)
         if data[4] & 0x80:
-            i = -i
-        value *= i
+            exp = -exp
+        value *= exp
 
         return value, unit
 
-    def get_value(
-        self, nbr: int
-    ) -> tuple[None, None] | tuple[float | None, str | None]:
-        """Get a value from the meter"""
+    def get_value(self, nbr: int) -> tuple[None, None] | tuple[float | None, str | None]:
+        """Get a value from the meter."""
         self._send(0x80, (0x3F, 0x10, 0x01, nbr >> 8, nbr & 0xFF))
 
         bytearray_data = self._receive()
         if bytearray_data is None:
             return (None, None)
 
-        if bytearray_data[0] != 0x3F or bytearray_data[1] != 0x10:
+        dest_addr = 0x3F
+        cid = 0x10
+        if bytearray_data[0] != dest_addr or bytearray_data[1] != cid:
             return (None, None)
 
         value, unit = self._process_response(nbr, bytearray_data[2:])
 
         return (value, unit)
 
-    def get_values(
-        self, multiple_nbr: list[int]
-    ) -> tuple[None, None] | tuple[float | None, str | None] | dict:
-        """Get values from the meter"""
-
+    def get_values(self, multiple_nbr: list[int]) -> dict[int, tuple[float | None, str | None]] | None:
+        """Get values from the meter."""
         if len(multiple_nbr) > MULTIPLE_NBR_MAX:
             multiple_nbr = multiple_nbr[:MULTIPLE_NBR_MAX]
             _LOGGER.warning(
@@ -183,24 +181,22 @@ class Kamstrup:
             )
 
         # Construct the request.
-        req = bytearray()
-        req.append(0x3F)  # destination address.
-        req.append(0x10)  # CID.
-        req.append(len(multiple_nbr))  # number of nbrs.
+        dest_addr = 0x3F
+        cid = 0x10
+        req = [dest_addr, cid, len(multiple_nbr)]
         for nbr in multiple_nbr:
             req.append(nbr >> 8)
             req.append(nbr & 0xFF)
-
-        self._send(0x80, req)
+        self._send(0x80, tuple(req))
 
         # Process response.
         bytearray_data = self._receive()
         if bytearray_data is None:
-            return (None, None)
+            return None
 
         # Check destination address and CID.
-        if bytearray_data[0] != 0x3F or bytearray_data[1] != 0x10:
-            return (None, None)
+        if bytearray_data[0] != dest_addr or bytearray_data[1] != cid:
+            return None
 
         # Decode response data, containing multiple variables.
         result = {}

@@ -2,23 +2,19 @@
 
 from datetime import datetime
 
-from homeassistant.components.sensor import (
-    DOMAIN as SENSOR_DOMAIN,
-    SensorDeviceClass,
-    SensorEntity,
-    SensorEntityDescription,
-    SensorStateClass,
-)
+from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
+from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorEntityDescription, SensorStateClass
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import UnitOfVolume
+from homeassistant.const import CONF_PORT, UnitOfVolume
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity import EntityCategory
+from homeassistant.helpers.device_registry import DeviceEntryType
+from homeassistant.helpers.entity import DeviceInfo, EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from homeassistant.util import dt
+from homeassistant.util import dt as dt_util
 
-from .const import DEFAULT_NAME, DOMAIN
+from .const import DEFAULT_NAME, DOMAIN, MANUFACTURER, MODEL, NAME
 from .coordinator import KamstrupUpdateCoordinator
 
 DESCRIPTIONS: list[SensorEntityDescription] = [
@@ -284,40 +280,40 @@ DATE_DESCRIPTIONS: list[SensorEntityDescription] = [
 
 
 async def async_setup_entry(
-    hass: HomeAssistant,
-    entry: ConfigEntry,
+    _hass: HomeAssistant,
+    config_entry: ConfigEntry[KamstrupUpdateCoordinator],
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up Kamstrup sensors based on a config entry."""
-    coordinator: KamstrupUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator: KamstrupUpdateCoordinator = config_entry.runtime_data
 
-    entities: list[KamstrupSensor] = []
-
-    # Add all meter sensors.
-    for description in DESCRIPTIONS:
-        entities.append(
-            KamstrupMeterSensor(
-                coordinator=coordinator,
-                entry_id=entry.entry_id,
-                description=description,
-            )
+    # Add all meter sensors using a list comprehension.
+    entities: list[KamstrupSensor] = [
+        KamstrupMeterSensor(
+            coordinator=coordinator,
+            config_entry=config_entry,
+            description=description,
         )
+        for description in DESCRIPTIONS
+    ]
 
     # Add all date sensors.
-    for date_description in DATE_DESCRIPTIONS:
-        entities.append(
+    entities.extend(
+        [
             KamstrupDateSensor(
                 coordinator=coordinator,
-                entry_id=entry.entry_id,
+                config_entry=config_entry,
                 description=date_description,
             )
-        )
+            for date_description in DATE_DESCRIPTIONS
+        ]
+    )
 
     # Add a "gas" sensor.
     entities.append(
         KamstrupGasSensor(
             coordinator=coordinator,
-            entry_id=entry.entry_id,
+            config_entry=config_entry,
             description=SensorEntityDescription(
                 key="gas",
                 name="Heat Energy to Gas",
@@ -336,10 +332,12 @@ async def async_setup_entry(
 class KamstrupSensor(CoordinatorEntity[KamstrupUpdateCoordinator], SensorEntity):
     """Defines a Kamstrup sensor."""
 
+    data_key: int
+
     def __init__(
         self,
         coordinator: KamstrupUpdateCoordinator,
-        entry_id: str,
+        config_entry: ConfigEntry[KamstrupUpdateCoordinator],
         description: SensorEntityDescription,
     ) -> None:
         """Initialize Kamstrup sensor."""
@@ -347,41 +345,58 @@ class KamstrupSensor(CoordinatorEntity[KamstrupUpdateCoordinator], SensorEntity)
 
         self.entity_id = f"{SENSOR_DOMAIN}.{DEFAULT_NAME}_{description.name}".lower()
         self.entity_description = description
-        self._attr_unique_id = f"{entry_id}-{DEFAULT_NAME} {self.name}"
-        self._attr_device_info = coordinator.device_info
+        self._attr_unique_id = f"{config_entry.entry_id}-{DEFAULT_NAME} {self.name}"
+        self._attr_device_info = DeviceInfo(
+            entry_type=DeviceEntryType.SERVICE,
+            identifiers={(DOMAIN, str(config_entry.data.get(CONF_PORT)))},
+            manufacturer=MANUFACTURER,
+            name=NAME,
+            model=MODEL,
+        )
+
+    @property
+    def available(self) -> bool:
+        """Return True if entity is available."""
+        return (
+            self.coordinator.data is not None
+            and self.data_key in self.coordinator.data
+            and self.coordinator.data[self.data_key].get("value", None) is not None
+        )
+
+    @property
+    def native_value(self) -> StateType | datetime:
+        """Return the state of the sensor."""
+        if self.coordinator.data and self.data_key in self.coordinator.data:
+            return self.coordinator.data[self.data_key].get("value", None)
+
+        return None
 
 
 class KamstrupMeterSensor(KamstrupSensor):
     """Defines a Kamstrup meter sensor."""
 
+    def __init__(
+        self, coordinator: KamstrupUpdateCoordinator, config_entry: ConfigEntry[KamstrupUpdateCoordinator], description: SensorEntityDescription
+    ) -> None:
+        """Initialize Kamstrup meter sensor."""
+        super().__init__(coordinator, config_entry, description)
+        self.data_key = int(description.key)
+
     async def async_added_to_hass(self) -> None:
         """Run when entity about to be added to hass."""
         await super().async_added_to_hass()
-        self.coordinator.register_command(self.int_key)
+        self.coordinator.register_command(self.data_key)
 
     async def async_will_remove_from_hass(self) -> None:
         """Run when entity will be removed from hass."""
         await super().async_will_remove_from_hass()
-        self.coordinator.unregister_command(self.int_key)
-
-    @property
-    def int_key(self) -> int:
-        """Get the key as an int"""
-        return int(self.entity_description.key)
-
-    @property
-    def native_value(self) -> StateType:
-        """Return the state of the sensor."""
-        if self.coordinator.data and self.coordinator.data[self.int_key]:
-            return self.coordinator.data[self.int_key].get("value", None)
-
-        return None
+        self.coordinator.unregister_command(self.data_key)
 
     @property
     def native_unit_of_measurement(self) -> str | None:
         """Return the unit of measurement of the sensor, if any."""
-        if self.coordinator.data and self.coordinator.data[self.int_key]:
-            return self.coordinator.data[self.int_key].get("unit", None)
+        if self.coordinator.data and self.data_key in self.coordinator.data:
+            return self.coordinator.data[self.data_key].get("unit", None)
 
         return None
 
@@ -389,11 +404,18 @@ class KamstrupMeterSensor(KamstrupSensor):
 class KamstrupDateSensor(KamstrupMeterSensor):
     """Defines a Kamstrup date sensor."""
 
+    def __init__(
+        self, coordinator: KamstrupUpdateCoordinator, config_entry: ConfigEntry[KamstrupUpdateCoordinator], description: SensorEntityDescription
+    ) -> None:
+        """Initialize Kamstrup date sensor."""
+        super().__init__(coordinator, config_entry, description)
+        self.data_key = int(description.key)
+
     @property
     def native_value(self) -> datetime | None:
         """Return the state of the sensor."""
         value = super().native_value
-        if value is not None:
+        if value is not None and isinstance(value, (float, int)):
             return self.to_datetime(value)
 
         return None
@@ -403,26 +425,22 @@ class KamstrupDateSensor(KamstrupMeterSensor):
         """Return the unit of measurement of the sensor, if any."""
         return None
 
-    @classmethod
-    def to_datetime(cls, value: float) -> datetime | None:
-        """
-        Convert a meter value to a datetime object.
+    def to_datetime(self, value: float) -> datetime | None:
+        """Convert a meter value to a datetime object.
+
         The value from the meter could be "230101.0" (yymmdd as float).
-        The returned datetime is in UTC.
+        The meter returns dates in the local timezone.
         """
-        string = str(
-            int(value)
-        )  # Removes the decimal and convert to string for strptime.
-        return dt.as_local(datetime.strptime(string, "%y%m%d"))
+        string = str(int(value))  # Removes any decimals and convert to string for strptime.
+        return datetime.strptime(string, "%y%m%d").replace(tzinfo=dt_util.get_default_time_zone())
 
 
 class KamstrupGasSensor(KamstrupSensor):
     """Defines a Kamstrup gas sensor."""
 
-    @property
-    def native_value(self) -> StateType:
-        """Return the state of the sensor."""
-        if self.coordinator.data and self.coordinator.data[60]:
-            return self.coordinator.data[60].get("value", None)
-
-        return None
+    def __init__(
+        self, coordinator: KamstrupUpdateCoordinator, config_entry: ConfigEntry[KamstrupUpdateCoordinator], description: SensorEntityDescription
+    ) -> None:
+        """Initialize Kamstrup gas sensor."""
+        super().__init__(coordinator, config_entry, description)
+        self.data_key = 60

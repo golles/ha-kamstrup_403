@@ -1,96 +1,145 @@
-"""Tests sensor."""
+"""Tests for sensor."""
 
-import datetime
+from unittest.mock import AsyncMock, patch
+from zoneinfo import ZoneInfo
 
-from homeassistant.components.sensor import SensorEntityDescription
+import pytest
 from homeassistant.core import HomeAssistant
-from homeassistant.util import dt
-from pytest_homeassistant_custom_component.common import async_fire_time_changed
+from homeassistant.util import dt as dt_util
 
-from custom_components.kamstrup_403.const import DOMAIN
-from custom_components.kamstrup_403.sensor import (
-    KamstrupDateSensor,
-    KamstrupGasSensor,
-    KamstrupMeterSensor,
+from custom_components.kamstrup_403.sensor import DESCRIPTIONS, KamstrupSensor
+
+from . import get_mock_config_entry, setup_integration, unload_integration
+
+
+@pytest.mark.parametrize(
+    ("entity", "value", "unit_of_measurement"),
+    [
+        ("sensor.kamstrup_403_heat_energy_e1", "1234.0", "GJ"),
+        ("sensor.kamstrup_403_heat_energy_to_gas", "1234.0", "m³"),
+        ("sensor.kamstrup_403_volume", "5678.0", "m³"),
+        ("sensor.kamstrup_403_infoevent", "0", None),
+        ("sensor.kamstrup_403_infoevent_counter", "1", None),
+        ("sensor.kamstrup_403_serial_number", "12345678", None),
+        ("sensor.kamstrup_403_hourcounter", "12345.0", None),
+    ],
 )
+async def test_state(hass: HomeAssistant, entity: str, value: str, unit_of_measurement: str | None) -> None:
+    """Test sensor states."""
+    config_entry = await setup_integration(hass)
 
-from . import setup_component
+    state = hass.states.get(entity)
+    assert state
+    assert state.state == value
+    if unit_of_measurement is not None:
+        assert state.attributes.get("unit_of_measurement") == unit_of_measurement
 
-
-async def test_kamstrup_gas_sensor(hass: HomeAssistant, bypass_get_data):
-    """Test for gas sensor."""
-    config_entry = await setup_component(hass)
-
-    sensor = KamstrupGasSensor(
-        hass.data[DOMAIN][config_entry.entry_id],
-        config_entry.entry_id,
-        SensorEntityDescription(
-            key="gas",
-            name="Heat Energy to Gas",
-        ),
-    )
-
-    # Mock data.
-    sensor.coordinator.data[60] = {"value": 1234, "unit": "GJ"}
-
-    async_fire_time_changed(
-        hass,
-        datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(seconds=1),
-    )
-    await hass.async_block_till_done()
-
-    assert sensor.state == 1234
+    await unload_integration(hass, config_entry)
 
 
-async def test_kamstrup_meter_sensor(hass: HomeAssistant, bypass_get_data):
-    """Test for base sensor."""
-    config_entry = await setup_component(hass)
+@pytest.mark.parametrize(
+    ("timezone_name", "expected_utc_time"),
+    [
+        ("UTC", "2023-01-23T00:00:00+00:00"),
+        ("US/Pacific", "2023-01-23T08:00:00+00:00"),  # PST = UTC-8, so local midnight becomes 08:00 UTC
+        ("Europe/London", "2023-01-23T00:00:00+00:00"),  # GMT = UTC in January
+        ("Europe/Amsterdam", "2023-01-22T23:00:00+00:00"),  # CET = UTC+1, so local midnight becomes 23:00 UTC previous day
+    ],
+)
+async def test_date_sensor_timezone_handling(hass: HomeAssistant, mock_kamstrup: AsyncMock, timezone_name: str, expected_utc_time: str) -> None:
+    """Test that KamstrupDateSensor handles timezones correctly regardless of system timezone."""
+    # Configure the mock to return a date value
+    mock_kamstrup.get_values.return_value = {
+        140: (230123.0, "yy:mm:dd"),  # MinFlowDate_M = January 23, 2023
+    }
 
-    sensor = KamstrupMeterSensor(
-        hass.data[DOMAIN][config_entry.entry_id],
-        config_entry.entry_id,
-        SensorEntityDescription(
-            key="60",
-            name="Heat Energy (E1)",
-        ),
-    )
+    # Mock the Home Assistant timezone to simulate different environments
+    with patch.object(dt_util, "get_default_time_zone", return_value=ZoneInfo(timezone_name)):
+        config_entry = await setup_integration(hass)
 
-    # Mock data.
-    sensor.coordinator.data[60] = {"value": 1234, "unit": "GJ"}
+        # Test the date sensor
+        state = hass.states.get("sensor.kamstrup_403_minflowdate_m")
+        assert state
+        assert state.state == expected_utc_time
 
-    async_fire_time_changed(
-        hass,
-        datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(seconds=1),
-    )
-    await hass.async_block_till_done()
-
-    assert sensor.int_key == 60
-    assert sensor.state == 1234
-    assert sensor.native_unit_of_measurement == "GJ"
+        await unload_integration(hass, config_entry)
 
 
-async def test_kamstrup_date_sensor(hass: HomeAssistant, bypass_get_data):
-    """Test for date sensor."""
-    config_entry = await setup_component(hass)
+async def test_native_value_returns_none_when_no_data(hass: HomeAssistant, mock_kamstrup: AsyncMock) -> None:
+    """Test that native_value returns None when coordinator.data is None."""
+    # Configure the mock to return no data
+    mock_kamstrup.get_values.return_value = {}
 
-    sensor = KamstrupDateSensor(
-        hass.data[DOMAIN][config_entry.entry_id],
-        config_entry.entry_id,
-        SensorEntityDescription(
-            key="140",  # 0x008C
-            name="MinFlowDate_M",
-        ),
-    )
+    config_entry = await setup_integration(hass)
 
-    # Mock data.
-    sensor.coordinator.data[140] = {"value": 230123.0, "unit": "yy:mm:dd"}
+    # Test a sensor that should exist but have no data
+    state = hass.states.get("sensor.kamstrup_403_heat_energy_e1")
+    assert state
+    assert state.state == "unavailable"  # Entity should be unavailable when data is None
 
-    async_fire_time_changed(
-        hass,
-        datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(seconds=1),
-    )
-    await hass.async_block_till_done()
+    await unload_integration(hass, config_entry)
 
-    assert sensor.int_key == 140
-    assert sensor.state == dt.as_local(datetime.datetime(2023, 1, 23))
-    assert sensor.native_unit_of_measurement is None
+
+async def test_native_value_returns_none_when_data_key_missing(hass: HomeAssistant, mock_kamstrup: AsyncMock) -> None:
+    """Test that native_value returns None when data_key is not in coordinator.data."""
+    # Configure the mock to return data but without the specific key we're testing
+    mock_kamstrup.get_values.return_value = {
+        99: (0, None),  # Some other key but not the one we want to test
+    }
+
+    config_entry = await setup_integration(hass)
+
+    # Test a sensor whose data key (60) is not in the returned data
+    state = hass.states.get("sensor.kamstrup_403_heat_energy_e1")
+    assert state
+    assert state.state == "unavailable"  # Entity should be unavailable when key is missing
+
+    await unload_integration(hass, config_entry)
+
+
+def test_native_value_method_directly_when_no_data() -> None:
+    """Test native_value method directly returns None when coordinator.data is None."""
+    # Set up a mock coordinator with no data
+    mock_coordinator = AsyncMock()
+    mock_coordinator.data = None
+
+    # Create sensor instance directly (not through integration)
+    sensor = KamstrupSensor(mock_coordinator, get_mock_config_entry(), DESCRIPTIONS[0])
+
+    # Test native_value directly
+    result = sensor.native_value
+    assert result is None
+
+
+async def test_date_sensor_returns_none_for_invalid_value(hass: HomeAssistant, mock_kamstrup: AsyncMock) -> None:
+    """Test that KamstrupDateSensor.native_value returns None for None or non-numeric values."""
+    # Configure the mock to return None value for the date sensor
+    mock_kamstrup.get_values.return_value = {
+        140: (None, "yy:mm:dd"),  # MinFlowDate_M with None value
+    }
+
+    config_entry = await setup_integration(hass)
+
+    # Test the date sensor
+    state = hass.states.get("sensor.kamstrup_403_minflowdate_m")
+    assert state
+    assert state.state == "unavailable"  # Entity should be unavailable when value is None
+
+    await unload_integration(hass, config_entry)
+
+
+async def test_date_sensor_returns_none_for_string_value(hass: HomeAssistant, mock_kamstrup: AsyncMock) -> None:
+    """Test that KamstrupDateSensor.native_value returns None for string values."""
+    # Configure the mock to return a string value (not float/int)
+    mock_kamstrup.get_values.return_value = {
+        140: ("invalid_date", "yy:mm:dd"),  # MinFlowDate_M with string value
+    }
+
+    config_entry = await setup_integration(hass)
+
+    # Test the date sensor
+    state = hass.states.get("sensor.kamstrup_403_minflowdate_m")
+    assert state
+    assert state.state == "unknown"  # Entity should be unknown when value is not numeric
+
+    await unload_integration(hass, config_entry)

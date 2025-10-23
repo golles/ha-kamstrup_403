@@ -1,5 +1,6 @@
 {
-    "name": "Kamstrup 403",
-    "homeassistant": "2023.6.0",
-    "render_readme": true
+  "name": "Kamstrup 403",
+  "homeassistant": "2025.8.0",
+  "zip_release": true,
+  "filename": "kamstrup_403.zip"
 }

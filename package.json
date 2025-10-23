@@ -1,0 +1,16 @@
+{
+  "name": "ha-kamstrup_403",
+  "version": "0.0.1",
+  "description": "Custom component that integrates the Kamstrup 403 heating system into Home Assistant. This component does also support a few other heating systems",
+  "author": "Sander Gols <developer@golles.nl>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "devDependencies": {
+    "prettier": "3.6.2"
+  },
+  "scripts": {
+    "prettier": "prettier"
+  }
+}

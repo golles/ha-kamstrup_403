@@ -1,20 +1,110 @@
-[tool.pytest.ini_options]
-minversion = "6.0"
-testpaths = ["tests"]
-norecursedirs = ".git"
-addopts = "--timeout=9 --durations=10"
-asyncio_mode = "auto"
+[project]
+name = "ha-kamstrup_403"
+version = "0.0.1"
+description = "Custom component that integrates the Kamstrup 403 heating system into Home Assistant. This component does also support a few other heating systems"
+authors = [{ name = "Sander Gols", email = "developer@golles.nl" }]
+requires-python = ">=3.13.2,<3.14"
+readme = "README.md"
+license = "MIT"
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Natural Language :: English",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "homeassistant>=2025.8.0",
+    "pyserial==3.5",
+]
 
-[tool.isort]
-# https://github.com/PyCQA/isort/wiki/isort-Settings
-profile = "black"
-multi_line_output = 3
-include_trailing_comma = true
-force_grid_wrap = 0
-use_parentheses = true
-line_length = 88
-# will group `import x` and `from x import` of the same module.
-force_sort_within_sections = true
-known_first_party = ["custom_components.kamstrup_403", "tests"]
-forced_separate = ["tests"]
-combine_as_imports = true
+Documentation = "https://github.com/golles/ha-kamstrup_403"
+Homepage = "https://github.com/golles/ha-kamstrup_403"
+Repository = "https://github.com/golles/ha-kamstrup_403"
+Issues = "https://github.com/golles/ha-kamstrup_403/issues"
+
+[dependency-groups]
+dev = [
+    "mypy==1.18.2",
+    "pre-commit==4.3.0",
+    "pylint==4.0.2",
+    "pytest",
+    "pytest-asyncio",
+    "pytest-cov",
+    "pytest-homeassistant-custom-component",
+    "ruff==0.14.1",
+    "shellcheck-py==0.11.0.1",
+    "yamllint==1.37.1",
+]
+runhass = [
+    "hassil",
+    "home_assistant_intents",
+    "mutagen",
+    "pymicro_vad",
+    "pyspeex_noise",
+    "PyTurboJPEG",
+]
+
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[tool.coverage.run]
+source = ["custom_components/kamstrup_403"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["custom_components/kamstrup_403"]
+
+[tool.mypy]
+python_version = "3.13"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "aresponses.*"
+ignore_missing_imports = true
+
+[tool.pylint]
+max-line-length = 150
+
+[tool.pylint."MESSAGES CONTROL"]
+disable = [
+  "abstract-method",
+  "duplicate-code",
+  "unexpected-keyword-arg",
+  "wrong-import-order",
+]
+
+[tool.pytest.ini_options]
+addopts = "--cov --cov-report=term --cov-report=xml"
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+log_cli = true
+log_cli_level = "DEBUG"
+
+[tool.ruff]
+line-length = 150
+target-version = "py313"
+src = ["custom_components/kamstrup_403"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+  "A005",
+  "COM812", # Cause conflicts when used with the formatter.
+  "TC",     # Ignore type-checking blocks.
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+  "S101",    # Allow assertions in tests.
+  "SLF001",  # Allow private member access in tests.
+  "PLR2004", # Allow magic numbers in tests.
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.isort]
+known-first-party = ["custom_components.kamstrup_403"]
