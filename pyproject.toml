@@ -3,7 +3,7 @@ name = "ha-kamstrup_403"
 version = "0.0.1"
 description = "Custom component that integrates the Kamstrup 403 heating system into Home Assistant. This component does also support a few other heating systems"
 authors = [{ name = "Sander Gols", email = "developer@golles.nl" }]
-requires-python = ">=3.13.2,<3.14"
+requires-python = ">=3.14,<3.15"
 readme = "README.md"
 license = "MIT"
 classifiers = [
