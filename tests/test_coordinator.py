@@ -4,9 +4,9 @@ from datetime import timedelta
 from unittest.mock import Mock
 
 import pytest
-import serial
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import UpdateFailed
+from serial import SerialException
 
 from custom_components.kamstrup_403.const import DOMAIN
 from custom_components.kamstrup_403.coordinator import KamstrupUpdateCoordinator
@@ -155,7 +155,7 @@ async def test_async_update_data_serial_exception(coordinator: KamstrupUpdateCoo
 
     # Mock serial exception
     exception_msg = "Connection failed"
-    mock_kamstrup.get_values.side_effect = serial.SerialException(exception_msg)
+    mock_kamstrup.get_values.side_effect = SerialException(exception_msg)
 
     # Execute update and expect UpdateFailed
     with pytest.raises(UpdateFailed):
@@ -281,7 +281,7 @@ async def test_async_update_data_exception_in_middle_chunk(coordinator: Kamstrup
             return {cmd: (float(cmd), "unit") for cmd in chunk}
         if chunk[0] == 68:  # Second chunk
             exception_msg = "Connection lost"
-            raise serial.SerialException(exception_msg)
+            raise SerialException(exception_msg)
         # Should not reach third chunk
         pytest.fail("Should not reach third chunk after exception")
         return {}

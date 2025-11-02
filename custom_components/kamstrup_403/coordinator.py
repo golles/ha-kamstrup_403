@@ -4,9 +4,9 @@ import logging
 from datetime import timedelta
 from typing import Any
 
-import serial
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from serial import SerialException
 
 from .const import DOMAIN
 from .pykamstrup.kamstrup import MULTIPLE_NBR_MAX, Kamstrup
@@ -59,8 +59,8 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator[dict[int, Any]]):
             _LOGGER.debug("Get values for %s", chunk)
 
             try:
-                values = self.kamstrup.get_values(chunk)
-            except serial.SerialException as exception:
+                values = await self.kamstrup.get_values(chunk)
+            except SerialException as exception:
                 _LOGGER.warning("Device disconnected or multiple access on port?")
                 raise UpdateFailed from exception
             except Exception as exception:
