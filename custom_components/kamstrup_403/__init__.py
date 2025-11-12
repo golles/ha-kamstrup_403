@@ -66,7 +66,6 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry[Kamst
 
 async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry[KamstrupUpdateCoordinator]) -> bool:
     """Unload a config entry."""
-    # Check if runtime_data exists (may not exist in tests)
     if hasattr(config_entry, "runtime_data") and config_entry.runtime_data:
         coordinator = config_entry.runtime_data
         if coordinator and coordinator.kamstrup:
