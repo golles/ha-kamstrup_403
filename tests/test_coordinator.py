@@ -11,12 +11,14 @@ from serial import SerialException
 from custom_components.kamstrup_403.const import DOMAIN
 from custom_components.kamstrup_403.coordinator import KamstrupUpdateCoordinator
 
+from . import get_mock_config_entry
+
 
 @pytest.fixture(name="coordinator")
 def fixture_coordinator(hass: HomeAssistant, mock_kamstrup: Mock) -> KamstrupUpdateCoordinator:
     """Create a test coordinator."""
     scan_interval = timedelta(seconds=30)
-    return KamstrupUpdateCoordinator(hass, mock_kamstrup, scan_interval)
+    return KamstrupUpdateCoordinator(hass, get_mock_config_entry(), mock_kamstrup, scan_interval)
 
 
 def test_init(coordinator: KamstrupUpdateCoordinator, mock_kamstrup: Mock) -> None:
