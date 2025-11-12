@@ -28,13 +28,13 @@ Issues = "https://github.com/golles/ha-kamstrup_403/issues"
 [dependency-groups]
 dev = [
     "mypy==1.18.2",
-    "pre-commit==4.3.0",
+    "pre-commit==4.4.0",
     "pylint==4.0.2",
     "pytest",
     "pytest-asyncio",
     "pytest-cov",
     "pytest-homeassistant-custom-component",
-    "ruff==0.14.3",
+    "ruff==0.14.4",
     "shellcheck-py==0.11.0.1",
     "yamllint==1.37.1",
 ]
