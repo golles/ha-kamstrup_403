@@ -4,9 +4,10 @@ import logging
 from datetime import timedelta
 from typing import Any
 
-import serial
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from serial import SerialException
 
 from .const import DOMAIN
 from .pykamstrup.kamstrup import MULTIPLE_NBR_MAX, Kamstrup
@@ -20,6 +21,7 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator[dict[int, Any]]):
     def __init__(
         self,
         hass: HomeAssistant,
+        config_entry: ConfigEntry,
         client: Kamstrup,
         scan_interval: timedelta,
     ) -> None:
@@ -28,7 +30,7 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator[dict[int, Any]]):
 
         self._commands: list[int] = []
 
-        super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=scan_interval)
+        super().__init__(hass, _LOGGER, config_entry=config_entry, name=DOMAIN, update_interval=scan_interval)
 
     def register_command(self, command: int) -> None:
         """Add a command to the commands list."""
@@ -59,8 +61,8 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator[dict[int, Any]]):
             _LOGGER.debug("Get values for %s", chunk)
 
             try:
-                values = self.kamstrup.get_values(chunk)
-            except serial.SerialException as exception:
+                values = await self.kamstrup.get_values(chunk)
+            except SerialException as exception:
                 _LOGGER.warning("Device disconnected or multiple access on port?")
                 raise UpdateFailed from exception
             except Exception as exception:
