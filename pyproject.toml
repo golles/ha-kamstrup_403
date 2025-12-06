@@ -27,14 +27,14 @@ Issues = "https://github.com/golles/ha-kamstrup_403/issues"
 
 [dependency-groups]
 dev = [
-    "mypy==1.18.2",
-    "pre-commit==4.4.0",
-    "pylint==4.0.2",
+    "mypy==1.19.0",
+    "pre-commit==4.5.0",
+    "pylint==4.0.4",
     "pytest",
     "pytest-asyncio",
     "pytest-cov",
     "pytest-homeassistant-custom-component",
-    "ruff==0.14.4",
+    "ruff==0.14.8",
     "shellcheck-py==0.11.0.1",
     "yamllint==1.37.1",
 ]
@@ -48,7 +48,7 @@ runhass = [
 ]
 
 [build-system]
-requires = ["hatchling==1.27.0"]
+requires = ["hatchling==1.28.0"]
 build-backend = "hatchling.build"
 
 [tool.coverage.run]
