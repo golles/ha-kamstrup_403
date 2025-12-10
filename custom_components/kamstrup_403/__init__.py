@@ -73,7 +73,7 @@ async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry[Kams
     """Unload a config entry."""
     if hasattr(config_entry, "runtime_data") and config_entry.runtime_data:
         coordinator = config_entry.runtime_data
-        if coordinator and coordinator.kamstrup:
+        if coordinator.kamstrup:
             await coordinator.kamstrup.disconnect()
     return await hass.config_entries.async_unload_platforms(config_entry, PLATFORMS)
 
