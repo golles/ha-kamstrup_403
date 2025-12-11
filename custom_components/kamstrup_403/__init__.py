@@ -7,7 +7,7 @@ https://github.com/custom-components/kamstrup_403
 import logging
 from datetime import timedelta
 
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.const import CONF_PORT, CONF_SCAN_INTERVAL, CONF_TIMEOUT, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
@@ -45,18 +45,24 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry[Kamst
 
     try:
         client = Kamstrup(url=port, baudrate=DEFAULT_BAUDRATE, timeout=timeout_seconds)
+        await client.connect()
     except Exception as exception:
         _LOGGER.warning("Can't establish a connection to %s", port)
         raise ConfigEntryNotReady from exception
 
     config_entry.runtime_data = coordinator = KamstrupUpdateCoordinator(
         hass=hass,
+        config_entry=config_entry,
         client=client,
         scan_interval=scan_interval,
     )
 
     await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
-    await coordinator.async_config_entry_first_refresh()
+
+    if config_entry.state is ConfigEntryState.LOADED:
+        await coordinator.async_refresh()
+    else:
+        await coordinator.async_config_entry_first_refresh()
 
     config_entry.async_on_unload(config_entry.add_update_listener(async_reload_entry))
 
@@ -65,6 +71,10 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry[Kamst
 
 async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry[KamstrupUpdateCoordinator]) -> bool:
     """Unload a config entry."""
+    if hasattr(config_entry, "runtime_data") and config_entry.runtime_data:
+        coordinator = config_entry.runtime_data
+        if coordinator.kamstrup:
+            await coordinator.kamstrup.disconnect()
     return await hass.config_entries.async_unload_platforms(config_entry, PLATFORMS)
 
 

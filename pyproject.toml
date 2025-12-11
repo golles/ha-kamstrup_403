@@ -17,7 +17,7 @@ classifiers = [
 ]
 dependencies = [
     "homeassistant>=2025.8.0",
-    "pyserial==3.5",
+    "pyserial-asyncio-fast==0.16",
 ]
 
 Documentation = "https://github.com/golles/ha-kamstrup_403"
