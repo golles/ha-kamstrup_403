@@ -13,6 +13,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import dt as dt_util
+from homeassistant.util import slugify
 
 from .const import DEFAULT_NAME, DOMAIN, MANUFACTURER, MODEL, NAME
 from .coordinator import KamstrupUpdateCoordinator
@@ -343,7 +344,8 @@ class KamstrupSensor(CoordinatorEntity[KamstrupUpdateCoordinator], SensorEntity)
         """Initialize Kamstrup sensor."""
         super().__init__(coordinator=coordinator)
 
-        self.entity_id = f"{SENSOR_DOMAIN}.{DEFAULT_NAME}_{description.name}".lower()
+        object_id = slugify(f"{DEFAULT_NAME}_{description.name}")
+        self.entity_id = f"{SENSOR_DOMAIN}.{object_id}"
         self.entity_description = description
         self._attr_unique_id = f"{config_entry.entry_id}-{DEFAULT_NAME} {self.name}"
         self._attr_device_info = DeviceInfo(
