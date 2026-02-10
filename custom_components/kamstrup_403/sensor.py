@@ -342,7 +342,7 @@ class KamstrupSensor(CoordinatorEntity[KamstrupUpdateCoordinator], SensorEntity)
         """Initialize Kamstrup sensor."""
         super().__init__(coordinator=coordinator)
 
-        self._attr_unique_id = f"{config_entry.entry_id}-{DEFAULT_NAME} {description.name}".lower()
+        self._attr_unique_id = f"{config_entry.entry_id}-{DEFAULT_NAME} {description.name}"
         self._attr_device_info = DeviceInfo(
             entry_type=DeviceEntryType.SERVICE,
             identifiers={(DOMAIN, str(config_entry.data.get(CONF_PORT)))},
