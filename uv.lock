@@ -919,7 +919,7 @@ runhass = [
 
 [package.metadata]
 requires-dist = [
-    { name = "homeassistant", specifier = ">=2025.8.0" },
+    { name = "homeassistant", specifier = ">=2026.2.0" },
     { name = "pyserial-asyncio-fast", specifier = "==0.16" },
 ]
 

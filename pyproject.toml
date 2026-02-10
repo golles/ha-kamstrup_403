@@ -12,11 +12,11 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Natural Language :: English",
   "Operating System :: OS Independent",
-  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Programming Language :: Python :: 3",
 ]
 dependencies = [
-    "homeassistant>=2025.8.0",
+    "homeassistant>=2026.2.0",
     "pyserial-asyncio-fast==0.16",
 ]
 
@@ -58,7 +58,7 @@ source = ["custom_components/kamstrup_403"]
 packages = ["custom_components/kamstrup_403"]
 
 [tool.mypy]
-python_version = "3.13"
+python_version = "3.14"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
