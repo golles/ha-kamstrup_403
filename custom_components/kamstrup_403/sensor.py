@@ -2,7 +2,6 @@
 
 from datetime import datetime
 
-from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorEntityDescription, SensorStateClass
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PORT, UnitOfVolume
@@ -343,9 +342,7 @@ class KamstrupSensor(CoordinatorEntity[KamstrupUpdateCoordinator], SensorEntity)
         """Initialize Kamstrup sensor."""
         super().__init__(coordinator=coordinator)
 
-        self.entity_id = f"{SENSOR_DOMAIN}.{DEFAULT_NAME}_{description.name}".lower()
-        self.entity_description = description
-        self._attr_unique_id = f"{config_entry.entry_id}-{DEFAULT_NAME} {self.name}"
+        self._attr_unique_id = f"{config_entry.entry_id}-{DEFAULT_NAME} {description.name}"
         self._attr_device_info = DeviceInfo(
             entry_type=DeviceEntryType.SERVICE,
             identifiers={(DOMAIN, str(config_entry.data.get(CONF_PORT)))},
@@ -353,6 +350,8 @@ class KamstrupSensor(CoordinatorEntity[KamstrupUpdateCoordinator], SensorEntity)
             name=NAME,
             model=MODEL,
         )
+
+        self.entity_description = description
 
     @property
     def available(self) -> bool:
@@ -362,6 +361,12 @@ class KamstrupSensor(CoordinatorEntity[KamstrupUpdateCoordinator], SensorEntity)
             and self.data_key in self.coordinator.data
             and self.coordinator.data[self.data_key].get("value", None) is not None
         )
+
+    @property
+    def name(self) -> str:
+        """Return the name of the sensor."""
+        # Override the default name to include the prefix "Kamstrup 403" for all sensors for backwards compatibility with existing entity names.
+        return f"{DEFAULT_NAME} {self.entity_description.name}"
 
     @property
     def native_value(self) -> StateType | datetime:
