@@ -4,7 +4,7 @@ from datetime import datetime
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorEntityDescription, SensorStateClass
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_PORT, UnitOfVolume
+from homeassistant.const import CONF_PORT, UnitOfVolumeFlowRate
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceEntryType
 from homeassistant.helpers.entity import DeviceInfo, EntityCategory
@@ -68,7 +68,9 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         key="74",  # 0x004A
         name="Flow",
         icon="mdi:water",
+        device_class=SensorDeviceClass.VOLUME_FLOW_RATE,
         state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=UnitOfVolumeFlowRate.LITERS_PER_HOUR,
         entity_registry_enabled_default=False,
     ),
     SensorEntityDescription(
@@ -308,23 +310,6 @@ async def async_setup_entry(
         ]
     )
 
-    # Add a "gas" sensor.
-    entities.append(
-        KamstrupGasSensor(
-            coordinator=coordinator,
-            config_entry=config_entry,
-            description=SensorEntityDescription(
-                key="gas",
-                name="Heat Energy to Gas",
-                icon="mdi:gas-burner",
-                native_unit_of_measurement=UnitOfVolume.CUBIC_METERS,
-                device_class=SensorDeviceClass.GAS,
-                state_class=SensorStateClass.TOTAL_INCREASING,
-                entity_registry_enabled_default=False,
-            ),
-        )
-    )
-
     async_add_entities(entities)
 
 
@@ -400,7 +385,12 @@ class KamstrupMeterSensor(KamstrupSensor):
     @property
     def native_unit_of_measurement(self) -> str | None:
         """Return the unit of measurement of the sensor, if any."""
+        if self.entity_description.native_unit_of_measurement is not None:
+            # If the unit of measurement is defined in the entity description, use it.
+            return self.entity_description.native_unit_of_measurement
+
         if self.coordinator.data and self.data_key in self.coordinator.data:
+            # Use the unit of measurement from the coordinator data if available.
             return self.coordinator.data[self.data_key].get("unit", None)
 
         return None
@@ -438,14 +428,3 @@ class KamstrupDateSensor(KamstrupMeterSensor):
         """
         string = str(int(value))  # Removes any decimals and convert to string for strptime.
         return datetime.strptime(string, "%y%m%d").replace(tzinfo=dt_util.get_default_time_zone())
-
-
-class KamstrupGasSensor(KamstrupSensor):
-    """Defines a Kamstrup gas sensor."""
-
-    def __init__(
-        self, coordinator: KamstrupUpdateCoordinator, config_entry: ConfigEntry[KamstrupUpdateCoordinator], description: SensorEntityDescription
-    ) -> None:
-        """Initialize Kamstrup gas sensor."""
-        super().__init__(coordinator, config_entry, description)
-        self.data_key = 60

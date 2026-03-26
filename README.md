@@ -87,16 +87,10 @@ Next to that, the component will read up to 8 sensors in one interaction with th
 
 ## Integration in the energy dashboard
 
-This component does support integration into the Home Assitant's energy dashboard.
+This component does support integration into the Home Assitant's gas energy dashboard.
 
-### Heat Energy (E1)
-
-This sensor, with unit `GJ`, can since Home Assistant release 2022.11 directly be added to the energy dashboard. It's important to understand that you need to add this in the individual devices section. So not in the electricity or gas section. The devices here will be added on the bottom of your energy dashboard in a horizontal bar graph showing all your devices in `kWh`. This is by design and can't be changed by this component.
-
-### Heat Energy to Gas
-
-From version `2.0.0` of this component, there is `Heat Energy to Gas` sensor, this is disabled by default and needs to be manually enabled. It's also required to have the `Heat Energy (E1)` sensor enabled for this to work.
-This sensor acts as a `gas` sensor with the `m³` unit and has the same value as `Heat Energy (E1)`. This sensor can be added to the energy dashboard in the gas section. The added value for this is, that you get a better visual representation in the energy dashboard, eg hourly graphs.
+- Heat Energy (E1) - GJ
+- Flow - L/h
 
 ## Collect logs
 
