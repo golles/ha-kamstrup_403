@@ -4,10 +4,12 @@ from unittest.mock import AsyncMock, patch
 from zoneinfo import ZoneInfo
 
 import pytest
+from homeassistant.components.sensor import SensorDeviceClass, SensorEntityDescription, SensorStateClass
+from homeassistant.const import UnitOfVolumeFlowRate
 from homeassistant.core import HomeAssistant
 from homeassistant.util import dt as dt_util
 
-from custom_components.kamstrup_403.sensor import DESCRIPTIONS, KamstrupSensor
+from custom_components.kamstrup_403.sensor import DESCRIPTIONS, KamstrupMeterSensor, KamstrupSensor
 
 from . import get_mock_config_entry, setup_integration, unload_integration
 
@@ -16,7 +18,6 @@ from . import get_mock_config_entry, setup_integration, unload_integration
     ("entity", "value", "unit_of_measurement"),
     [
         ("sensor.kamstrup_403_heat_energy_e1", "1234.0", "GJ"),
-        ("sensor.kamstrup_403_heat_energy_to_gas", "1234.0", "m³"),
         ("sensor.kamstrup_403_volume", "5678.0", "m³"),
         ("sensor.kamstrup_403_infoevent", "0", None),
         ("sensor.kamstrup_403_infoevent_counter", "1", None),
@@ -143,3 +144,21 @@ async def test_date_sensor_returns_none_for_string_value(hass: HomeAssistant, mo
     assert state.state == "unknown"  # Entity should be unknown when value is not numeric
 
     await unload_integration(hass, config_entry)
+
+
+def test_native_unit_of_measurement_from_entity_description() -> None:
+    """Test that native_unit_of_measurement returns the value from the entity description."""
+    description = SensorEntityDescription(
+        key="74",
+        name="Flow",
+        icon="mdi:water",
+        device_class=SensorDeviceClass.VOLUME_FLOW_RATE,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=UnitOfVolumeFlowRate.LITERS_PER_HOUR,
+        entity_registry_enabled_default=False,
+    )
+
+    mock_coordinator = AsyncMock()
+    sensor = KamstrupMeterSensor(mock_coordinator, get_mock_config_entry(), description)
+
+    assert sensor.native_unit_of_measurement == UnitOfVolumeFlowRate.LITERS_PER_HOUR
