@@ -233,7 +233,7 @@ async def test_async_update_data_mixed_chunks_with_failures(coordinator: Kamstru
             60: (1234.0, "GJ"),
             63: (5678.0, "MJ"),
             68: (90.0, "m³"),
-            74: (12.5, "m³/h"),
+            74: (12.5, "l/h"),
             80: (45.0, "kW"),
             86: (25.0, "°C"),
             87: (30.0, "°C"),
