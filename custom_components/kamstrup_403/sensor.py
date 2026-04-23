@@ -4,7 +4,7 @@ from datetime import datetime
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorEntityDescription, SensorStateClass
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_PORT, UnitOfVolumeFlowRate
+from homeassistant.const import CONF_PORT, UnitOfVolume, UnitOfVolumeFlowRate
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceEntryType
 from homeassistant.helpers.entity import DeviceInfo, EntityCategory
@@ -310,6 +310,23 @@ async def async_setup_entry(
         ]
     )
 
+    # Add a "gas" sensor.
+    entities.append(
+        KamstrupGasSensor(
+            coordinator=coordinator,
+            config_entry=config_entry,
+            description=SensorEntityDescription(
+                key="gas",
+                name="Heat Energy to Gas",
+                icon="mdi:gas-burner",
+                native_unit_of_measurement=UnitOfVolume.CUBIC_METERS,
+                device_class=SensorDeviceClass.GAS,
+                state_class=SensorStateClass.TOTAL_INCREASING,
+                entity_registry_enabled_default=False,
+            ),
+        )
+    )
+
     async_add_entities(entities)
 
 
@@ -428,3 +445,14 @@ class KamstrupDateSensor(KamstrupMeterSensor):
         """
         string = str(int(value))  # Removes any decimals and convert to string for strptime.
         return datetime.strptime(string, "%y%m%d").replace(tzinfo=dt_util.get_default_time_zone())
+
+
+class KamstrupGasSensor(KamstrupSensor):
+    """Defines a Kamstrup gas sensor."""
+
+    def __init__(
+        self, coordinator: KamstrupUpdateCoordinator, config_entry: ConfigEntry[KamstrupUpdateCoordinator], description: SensorEntityDescription
+    ) -> None:
+        """Initialize Kamstrup gas sensor."""
+        super().__init__(coordinator, config_entry, description)
+        self.data_key = 60

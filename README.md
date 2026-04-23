@@ -92,6 +92,11 @@ This component does support integration into the Home Assitant's gas energy dash
 - Heat Energy (E1) - GJ
 - Flow - L/h
 
+### Gas conversion sensor
+
+There is `Heat Energy to Gas` sensor, this is disabled by default and needs to be manually enabled. It's also required to have the `Heat Energy (E1)` sensor enabled for this to work.
+This sensor acts as a `gas` sensor with the `m³` unit and has the same value as `Heat Energy (E1)`. This sensor can be added to the energy dashboard in the gas section. The added value for this is, that you get a better visual representation in the energy dashboard for gas usage (instead of kWh).
+
 ## Collect logs
 
 When you want to report an issue, please add logs from this component. You can enable logging for this component by configuring the logger in Home Assistant as follows:

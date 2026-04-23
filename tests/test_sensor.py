@@ -18,6 +18,7 @@ from . import get_mock_config_entry, setup_integration, unload_integration
     ("entity", "value", "unit_of_measurement"),
     [
         ("sensor.kamstrup_403_heat_energy_e1", "1234.0", "GJ"),
+        ("sensor.kamstrup_403_heat_energy_to_gas", "1234.0", "m³"),
         ("sensor.kamstrup_403_volume", "5678.0", "m³"),
         ("sensor.kamstrup_403_infoevent", "0", None),
         ("sensor.kamstrup_403_infoevent_counter", "1", None),
