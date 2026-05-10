@@ -7,7 +7,7 @@ from typing import Any
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
-from serial import SerialException
+from serialx import SerialException
 
 from .const import DOMAIN
 from .pykamstrup.kamstrup import MULTIPLE_NBR_MAX, Kamstrup
