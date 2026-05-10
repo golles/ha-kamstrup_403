@@ -6,7 +6,7 @@ from unittest.mock import Mock
 import pytest
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import UpdateFailed
-from serial import SerialException
+from serialx import SerialException
 
 from custom_components.kamstrup_403.const import DOMAIN
 from custom_components.kamstrup_403.coordinator import KamstrupUpdateCoordinator

@@ -35,8 +35,7 @@ def test_crc_1021() -> None:
 
 def test_debug(caplog: pytest.LogCaptureFixture) -> None:
     """Test debug logging."""
-    with patch("serial.serial_for_url"):
-        kamstrup = Kamstrup("test_url", 9600, 1.0)
+    kamstrup = Kamstrup("test_url", 9600, 1.0)
 
     with caplog.at_level("DEBUG"):
         kamstrup._debug("Test message", bytearray([0x01, 0x02, 0xFF]))  # pylint: disable=protected-access
@@ -46,7 +45,7 @@ def test_debug(caplog: pytest.LogCaptureFixture) -> None:
 
 async def test_connect() -> None:
     """Test connection method."""
-    with patch("custom_components.kamstrup_403.pykamstrup.kamstrup.serial_asyncio.open_serial_connection") as mock_open:
+    with patch("custom_components.kamstrup_403.pykamstrup.kamstrup.serialx.open_serial_connection") as mock_open:
         mock_reader = AsyncMock()
         mock_writer = AsyncMock()
         mock_open.return_value = (mock_reader, mock_writer)
@@ -61,7 +60,7 @@ async def test_connect() -> None:
 
 async def test_connect_already_connected() -> None:
     """Test connection when already connected."""
-    with patch("custom_components.kamstrup_403.pykamstrup.kamstrup.serial_asyncio.open_serial_connection") as mock_open:
+    with patch("custom_components.kamstrup_403.pykamstrup.kamstrup.serialx.open_serial_connection") as mock_open:
         mock_reader = AsyncMock()
         mock_writer = AsyncMock()
         mock_open.return_value = (mock_reader, mock_writer)
@@ -131,7 +130,7 @@ async def test_write_no_writer() -> None:
 
 async def test_ensure_connected_missing_reader() -> None:
     """Test _ensure_connected when reader is None."""
-    with patch("custom_components.kamstrup_403.pykamstrup.kamstrup.serial_asyncio.open_serial_connection") as mock_open:
+    with patch("custom_components.kamstrup_403.pykamstrup.kamstrup.serialx.open_serial_connection") as mock_open:
         mock_reader = AsyncMock()
         mock_writer = AsyncMock()
         mock_open.return_value = (mock_reader, mock_writer)
@@ -149,7 +148,7 @@ async def test_ensure_connected_missing_reader() -> None:
 
 async def test_ensure_connected_missing_writer() -> None:
     """Test _ensure_connected when writer is None."""
-    with patch("custom_components.kamstrup_403.pykamstrup.kamstrup.serial_asyncio.open_serial_connection") as mock_open:
+    with patch("custom_components.kamstrup_403.pykamstrup.kamstrup.serialx.open_serial_connection") as mock_open:
         mock_reader = AsyncMock()
         mock_writer = AsyncMock()
         mock_open.return_value = (mock_reader, mock_writer)

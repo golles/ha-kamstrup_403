@@ -11,7 +11,7 @@ import asyncio
 import logging
 import math
 
-import serial_asyncio_fast as serial_asyncio
+import serialx
 
 from .const import ESCAPES, UNITS
 
@@ -36,7 +36,7 @@ class Kamstrup:
     async def connect(self) -> None:
         """Connect to the serial device."""
         if self.reader is None or self.writer is None:
-            self.reader, self.writer = await serial_asyncio.open_serial_connection(url=self.url, baudrate=self.baudrate)
+            self.reader, self.writer = await serialx.open_serial_connection(url=self.url, baudrate=self.baudrate)
 
     async def disconnect(self) -> None:
         """Disconnect from the serial device."""
