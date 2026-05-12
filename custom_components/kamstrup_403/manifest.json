@@ -7,6 +7,6 @@
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/golles/ha-kamstrup_403/issues",
   "loggers": ["custom_components.kamstrup_403"],
-  "requirements": ["serialx==1.7.2"],
+  "requirements": ["serialx==1.7.3"],
   "version": "0.0.1"
 }
