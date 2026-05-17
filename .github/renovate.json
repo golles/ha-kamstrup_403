@@ -53,6 +53,12 @@
       "enabled": false
     },
     {
+      "description": "Don't pin serialx in manifest.json — Home Assistant core ships it and rejects mismatched pins",
+      "matchFileNames": ["custom_components/**/manifest.json"],
+      "matchPackageNames": ["serialx"],
+      "enabled": false
+    },
+    {
       "description": "Python dependencies",
       "matchManagers": ["pep621"],
       "addLabels": ["python"]
