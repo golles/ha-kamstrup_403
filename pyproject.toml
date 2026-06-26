@@ -16,7 +16,7 @@ classifiers = [
   "Programming Language :: Python :: 3",
 ]
 dependencies = [
-    "homeassistant>=2026.2.0",
+    "homeassistant>=2026.6.0",
     "serialx==1.8.2",
 ]
 
