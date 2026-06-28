@@ -28,14 +28,15 @@ There is not a lot of tolerance for placing the optical eye on the meter, it can
 ### Supported devices
 
 This component is created to only support the Kamstrup 403 meter. This is a conscious decision because I do own this device and I can only offer support for that. There are some similar devices that work with the same communication protocol. If it does work for a meter that isn't listed below, please create a [feature request](https://github.com/golles/ha-kamstrup_403/issues/new?template=supported_device.yaml) so I can update the table.
-Meter | Supported | Description
--- | -- | --
-Kamstrup 403 | Yes |
-Kamstrup 402 | Yes | Confirmed in [#14](https://github.com/golles/ha-kamstrup_403/issues/27)
-Kamstrup 601 | Yes | Confirmed in [#14](https://github.com/golles/ha-kamstrup_403/issues/14)
-Kamstrup 602 | Yes | Confirmed in [#10](https://github.com/golles/ha-kamstrup_403/issues/10)
-Kamstrup 603 | Yes | Confirmed in [#18](https://github.com/golles/ha-kamstrup_403/issues/18)
-Kamstrup MC66C | No | Supported in my [old component](https://github.com/golles/Home-Assistant-Sensor-MC66C)
+
+| Meter          | Supported | Description                                                                            |
+| -------------- | --------- | -------------------------------------------------------------------------------------- |
+| Kamstrup 403   | Yes       |
+| Kamstrup 402   | Yes       | Confirmed in [#14](https://github.com/golles/ha-kamstrup_403/issues/27)                |
+| Kamstrup 601   | Yes       | Confirmed in [#14](https://github.com/golles/ha-kamstrup_403/issues/14)                |
+| Kamstrup 602   | Yes       | Confirmed in [#10](https://github.com/golles/ha-kamstrup_403/issues/10)                |
+| Kamstrup 603   | Yes       | Confirmed in [#18](https://github.com/golles/ha-kamstrup_403/issues/18)                |
+| Kamstrup MC66C | No        | Supported in my [old component](https://github.com/golles/Home-Assistant-Sensor-MC66C) |
 
 ## Installation
 
