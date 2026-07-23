@@ -90,8 +90,13 @@ Next to that, the component will read up to 8 sensors in one interaction with th
 
 This component does support integration into the Home Assitant's gas energy dashboard.
 
-- Heat Energy (E1) - GJ
+- Heat Energy (E1) - GJ, or Heat Energy (E1) high res - Wh
 - Flow - L/h
+
+The high res sensor gives a much better insight into the spread of heating usage throughout the day.
+
+If you are upgrading, and you were using Heat Energy (E1), be careful with changing the entity.
+Just adding the new high res one and deleting the old one will make all your old data invisible.
 
 ### Gas conversion sensor
 

@@ -25,6 +25,13 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     SensorEntityDescription(
+        key="266",  # 0x010A
+        name="Heat Energy (E1) high res",
+        icon="mdi:radiator",
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+    ),
+    SensorEntityDescription(
         key="63",  # 0x003F
         name="Cooling Energy (E3)",
         icon="mdi:snowflake",
