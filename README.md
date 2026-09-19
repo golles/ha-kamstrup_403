@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> **This project is looking for a new maintainer.** I'm moving house and will no longer be able to test against a real Kamstrup meter. Regular maintenance continues until 1 January 2027, after that only critical fixes. If you'd like to take over, see [#360](https://github.com/golles/ha-kamstrup_403/issues/360).
+
 # Kamstrup 403
 
 [![GitHub Release][releases-shield]][releases]
