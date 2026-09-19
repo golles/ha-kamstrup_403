@@ -94,6 +94,7 @@ This component does support integration into the Home Assitant's gas energy dash
 - Flow - L/h
 
 The high res sensor gives a much better insight into the spread of heating usage throughout the day.
+This register is not available on all meters, so the `Heat Energy (E1) high res` sensor is disabled by default. If your meter supports it, enable it manually. When your meter does not support it, reading it fails; the other sensors keep working, and a warning is logged suggesting you disable the `Heat Energy (E1) high res` sensor to avoid unnecessary reads.
 
 If you are upgrading, and you were using Heat Energy (E1), be careful with changing the entity.
 Just adding the new high res one and deleting the old one will make all your old data invisible.

@@ -1,5 +1,6 @@
 """Test for data update coordinator."""
 
+import logging
 from datetime import timedelta
 from unittest.mock import Mock
 
@@ -167,20 +168,22 @@ async def test_async_update_data_serial_exception(coordinator: KamstrupUpdateCoo
 
 
 async def test_async_update_data_general_exception(coordinator: KamstrupUpdateCoordinator, mock_kamstrup: Mock) -> None:
-    """Test data update with general exception."""
+    """Test a general exception falls back to individual reads instead of failing the whole update."""
     commands = [60, 68]
     for command in commands:
         coordinator.register_command(command)
 
-    # Mock general exception
+    # Mock general exception, raised for both the batch read and the individual retries.
     exception_msg = "Unexpected error"
     mock_kamstrup.get_values.side_effect = Exception(exception_msg)
 
-    # Execute update and expect UpdateFailed
-    with pytest.raises(UpdateFailed):
-        await coordinator._async_update_data()  # pylint: disable=protected-access
+    result = await coordinator._async_update_data()  # pylint: disable=protected-access
 
-    mock_kamstrup.get_values.assert_called_once_with(commands)
+    # Both commands failed individually, so they are marked as None instead of raising UpdateFailed.
+    assert result == {60: {"value": None, "unit": None}, 68: {"value": None, "unit": None}}
+
+    # The batch read is retried once per command after the initial batch attempt.
+    assert mock_kamstrup.get_values.call_count == 3
 
 
 async def test_async_update_data_returns_none(coordinator: KamstrupUpdateCoordinator, mock_kamstrup: Mock) -> None:
@@ -296,6 +299,43 @@ async def test_async_update_data_exception_in_middle_chunk(coordinator: Kamstrup
 
     # Should only be called twice (first chunk success, second chunk fails)
     assert mock_kamstrup.get_values.call_count == 2
+
+
+async def test_async_update_data_faulty_command_isolated(
+    coordinator: KamstrupUpdateCoordinator, mock_kamstrup: Mock, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Test a single faulty register is isolated so the other sensors keep working.
+
+    Some meters don't support a register (e.g. the high resolution Heat Energy, command 266), and
+    reading it raises an error that fails the whole batch. See
+    https://github.com/golles/ha-kamstrup_403/issues/324.
+    """
+    faulty_command = 266
+    commands = [60, faulty_command, 80]
+    for command in commands:
+        coordinator.register_command(command)
+
+    exception_msg = "bytearray index out of range"
+
+    def side_effect(requested: list[int]) -> dict[int, tuple[float, str]]:
+        # The batch read and the unsupported register both raise, e.g. "bytearray index out of range".
+        if len(requested) > 1 or requested[0] == faulty_command:
+            raise IndexError(exception_msg)
+        return {requested[0]: (float(requested[0]), "unit")}
+
+    mock_kamstrup.get_values.side_effect = side_effect
+
+    with caplog.at_level(logging.WARNING):
+        result = await coordinator._async_update_data()  # pylint: disable=protected-access
+
+    # The good commands still have values, only the faulty register is None.
+    assert result[60] == {"value": 60.0, "unit": "unit"}
+    assert result[80] == {"value": 80.0, "unit": "unit"}
+    assert result[faulty_command] == {"value": None, "unit": None}
+
+    # A hint is logged for the faulty command suggesting to disable the corresponding sensor.
+    assert f"Error reading command {faulty_command}" in caplog.text
+    assert "disable the corresponding sensor" in caplog.text
 
 
 async def test_async_update_data_all_commands_fail(coordinator: KamstrupUpdateCoordinator, mock_kamstrup: Mock) -> None:
