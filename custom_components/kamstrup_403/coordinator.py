@@ -60,14 +60,7 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator[dict[int, Any]]):
         for chunk in chunks:
             _LOGGER.debug("Get values for %s", chunk)
 
-            try:
-                values = await self.kamstrup.get_values(chunk)
-            except SerialException as exception:
-                _LOGGER.warning("Device disconnected or multiple access on port?")
-                raise UpdateFailed from exception
-            except Exception as exception:
-                _LOGGER.warning("Error reading multiple %s \nException: %s", chunk, exception)
-                raise UpdateFailed from exception
+            values = await self._get_values(chunk)
 
             if values is None:
                 _LOGGER.debug("No values returned for chunk %s", chunk)
@@ -94,3 +87,32 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator[dict[int, Any]]):
             )
 
         return data
+
+    async def _get_values(self, commands: list[int]) -> dict[int, Any] | None:
+        """Read a batch of commands, isolating a single faulty command if the batch read fails.
+
+        Some registers are not available on all meters, and reading such a register raises an error that fails the whole batch.
+        To keep the other sensors working, retry each command individually when a multi-command batch read fails.
+        """
+        try:
+            return await self.kamstrup.get_values(commands)
+        except SerialException as exception:
+            _LOGGER.warning("Device disconnected or multiple access on port?")
+            raise UpdateFailed from exception
+        except Exception as exception:  # noqa: BLE001  # pylint: disable=broad-exception-caught
+            if len(commands) > 1:
+                _LOGGER.warning("Error reading multiple %s, retrying each command individually \nException: %s", commands, exception)
+                values: dict[int, Any] = {}
+                for command in commands:
+                    single = await self._get_values([command])
+                    if single is not None:
+                        values.update(single)
+                return values
+
+            _LOGGER.warning(
+                "Error reading command %s, this register may not be supported by your meter. If this keeps happening, disable the "
+                "corresponding sensor to avoid unnecessary reads. \nException: %s",
+                commands[0],
+                exception,
+            )
+            return None

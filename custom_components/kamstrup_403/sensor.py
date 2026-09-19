@@ -30,6 +30,7 @@ DESCRIPTIONS: list[SensorEntityDescription] = [
         icon="mdi:radiator",
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
+        entity_registry_enabled_default=False,  # Command 266 is not available on all meters.
     ),
     SensorEntityDescription(
         key="63",  # 0x003F
