@@ -1,8 +1,7 @@
 """Config flow for Kamstrup 403 integration."""
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-import voluptuous as vol
 from homeassistant.config_entries import SOURCE_RECONFIGURE, ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.const import CONF_PORT, CONF_SCAN_INTERVAL, CONF_TIMEOUT
 from homeassistant.core import callback
@@ -10,6 +9,13 @@ from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, Tex
 
 from .const import DEFAULT_BAUDRATE, DEFAULT_SCAN_INTERVAL, DEFAULT_TIMEOUT, DOMAIN
 from .pykamstrup.kamstrup import Kamstrup
+
+# Home Assistant 2026.9+ uses probatio, which it also registers as `voluptuous` at runtime.
+# Keep importing voluptuous for compatibility with older versions, but type against probatio.
+if TYPE_CHECKING:
+    import probatio as vol
+else:
+    import voluptuous as vol
 
 CONFIG_SCHEMA = vol.Schema(
     {
