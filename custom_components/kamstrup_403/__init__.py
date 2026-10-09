@@ -7,7 +7,7 @@ https://github.com/custom-components/kamstrup_403
 import logging
 from datetime import timedelta
 
-from homeassistant.config_entries import ConfigEntry, ConfigEntryState
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PORT, CONF_SCAN_INTERVAL, CONF_TIMEOUT, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
@@ -59,12 +59,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry[Kamst
 
     await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
 
-    if config_entry.state is ConfigEntryState.LOADED:
-        await coordinator.async_refresh()
-    else:
-        await coordinator.async_config_entry_first_refresh()
-
-    config_entry.async_on_unload(config_entry.add_update_listener(async_reload_entry))
+    await coordinator.async_config_entry_first_refresh()
 
     return True
 
@@ -76,9 +71,3 @@ async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry[Kams
         if coordinator.kamstrup:
             await coordinator.kamstrup.disconnect()
     return await hass.config_entries.async_unload_platforms(config_entry, PLATFORMS)
-
-
-async def async_reload_entry(hass: HomeAssistant, config_entry: ConfigEntry[KamstrupUpdateCoordinator]) -> None:
-    """Reload config entry."""
-    await async_unload_entry(hass, config_entry)
-    await async_setup_entry(hass, config_entry)

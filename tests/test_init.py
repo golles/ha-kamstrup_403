@@ -52,13 +52,3 @@ async def test_setup_entry_no_port(hass: HomeAssistant) -> None:
     # This should raise ValueError due to missing port
     with pytest.raises(ValueError):  # noqa: PT011
         await async_setup_entry(hass, config_entry)
-
-
-async def test_async_reload_entry(hass: HomeAssistant) -> None:
-    """Test reloading the entry."""
-    config_entry = await setup_integration(hass)
-
-    with patch("custom_components.kamstrup_403.async_reload_entry") as mock_reload_entry:
-        assert len(mock_reload_entry.mock_calls) == 0
-        hass.config_entries.async_update_entry(config_entry, options={"something": "else"})
-        assert len(mock_reload_entry.mock_calls) == 1
