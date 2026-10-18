@@ -2,7 +2,7 @@
 
 from typing import Any
 
-import voluptuous as vol
+import probatio
 from homeassistant.config_entries import SOURCE_RECONFIGURE, ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow, OptionsFlowWithReload
 from homeassistant.const import CONF_PORT, CONF_SCAN_INTERVAL, CONF_TIMEOUT
 from homeassistant.core import callback
@@ -11,9 +11,9 @@ from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, Tex
 from .const import DEFAULT_BAUDRATE, DEFAULT_SCAN_INTERVAL, DEFAULT_TIMEOUT, DOMAIN
 from .pykamstrup.kamstrup import Kamstrup
 
-CONFIG_SCHEMA = vol.Schema(
+CONFIG_SCHEMA = probatio.Schema(
     {
-        vol.Required(CONF_PORT): TextSelector(TextSelectorConfig(type=TextSelectorType.TEXT)),
+        probatio.Required(CONF_PORT): TextSelector(TextSelectorConfig(type=TextSelectorType.TEXT)),
     },
 )
 
@@ -73,16 +73,16 @@ class KamstrupOptionsFlowHandler(OptionsFlowWithReload):
 
         return self.async_show_form(
             step_id="init",
-            data_schema=vol.Schema(
+            data_schema=probatio.Schema(
                 {
-                    vol.Required(
+                    probatio.Required(
                         CONF_SCAN_INTERVAL,
                         default=self.config_entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
-                    ): vol.All(vol.Coerce(int), vol.Range(min=1, max=86400)),
-                    vol.Required(
+                    ): probatio.All(probatio.Coerce(int), probatio.Range(min=1, max=86400)),
+                    probatio.Required(
                         CONF_TIMEOUT,
                         default=self.config_entry.options.get(CONF_TIMEOUT, DEFAULT_TIMEOUT),
-                    ): vol.All(vol.Coerce(float), vol.Range(min=0.0, max=5.0)),
+                    ): probatio.All(probatio.Coerce(float), probatio.Range(min=0.0, max=5.0)),
                 }
             ),
         )
