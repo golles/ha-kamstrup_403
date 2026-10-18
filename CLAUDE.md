@@ -51,7 +51,7 @@ The integration follows the standard Home Assistant coordinator pattern:
 - **`__init__.py`** — Entry point. Calls `async_setup_entry` / `async_unload_entry`, creates the coordinator, and forwards setup to the sensor platform. The coordinator is stored in `config_entry.runtime_data`.
 - **`coordinator.py`** — `KamstrupUpdateCoordinator` manages all meter communication. Sensors register their commands via `coordinator.register_command(command_id)`. On each update cycle, the coordinator fetches data for all registered commands in batches (max 8 per update, a protocol constraint). Stores results keyed by command ID as `{"value": ..., "unit": ...}`.
 - **`sensor.py`** — Defines the sensor entity class hierarchy. Most sensors have `entity_registry_enabled_default = False` to avoid excessive polling (battery life concern).
-- **`config_flow.py`** — UI flow for configuring the serial port (`ConfigFlow`) and options flow for scan interval and read timeout (`OptionsFlow`).
+- **`config_flow.py`** — UI flow for configuring the serial port (`ConfigFlow`) and options flow for scan interval and read timeout (`OptionsFlowWithReload`, reloads the entry on change).
 - **`diagnostics.py`** — HA diagnostics support; exposes `config_entry`, `data`, and `registered_commands` for debugging.
 - **`const.py`** — Domain name, default values (scan interval: 3600s, timeout: 1.0s, baudrate: 1200 baud — fixed by KMP).
 

@@ -3,7 +3,7 @@
 from typing import Any
 
 import voluptuous as vol
-from homeassistant.config_entries import SOURCE_RECONFIGURE, ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow
+from homeassistant.config_entries import SOURCE_RECONFIGURE, ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow, OptionsFlowWithReload
 from homeassistant.const import CONF_PORT, CONF_SCAN_INTERVAL, CONF_TIMEOUT
 from homeassistant.core import callback
 from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, TextSelectorType
@@ -63,7 +63,7 @@ class KamstrupFlowHandler(ConfigFlow, domain=DOMAIN):
         return KamstrupOptionsFlowHandler()
 
 
-class KamstrupOptionsFlowHandler(OptionsFlow):
+class KamstrupOptionsFlowHandler(OptionsFlowWithReload):
     """Kamstrup config flow options handler."""
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
