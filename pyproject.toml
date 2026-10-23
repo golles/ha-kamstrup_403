@@ -17,7 +17,7 @@ classifiers = [
 ]
 dependencies = [
     "homeassistant>=2026.10.0",
-    "serialx==1.14.0",
+    "serialx==1.15.0",
 ]
 
 Documentation = "https://github.com/golles/ha-kamstrup_403"
