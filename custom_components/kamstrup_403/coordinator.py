@@ -93,11 +93,12 @@ class KamstrupUpdateCoordinator(DataUpdateCoordinator[dict[int, Any]]):
 
         Some registers are not available on all meters, and reading such a register raises an error that fails the whole batch.
         To keep the other sensors working, retry each command individually when a multi-command batch read fails.
+        Connection errors are not retried, the client drops the broken connection and reconnects on the next update.
         """
         try:
             return await self.kamstrup.get_values(commands)
-        except SerialException as exception:
-            _LOGGER.warning("Device disconnected or multiple access on port?")
+        except (SerialException, OSError) as exception:
+            _LOGGER.warning("Device disconnected or multiple access on port? \nException: %s", exception)
             raise UpdateFailed from exception
         except Exception as exception:  # noqa: BLE001  # pylint: disable=broad-exception-caught
             if len(commands) > 1:
