@@ -39,12 +39,19 @@ class Kamstrup:
             self.reader, self.writer = await serialx.open_serial_connection(url=self.url, baudrate=self.baudrate)
 
     async def disconnect(self) -> None:
-        """Disconnect from the serial device."""
+        """Disconnect from the serial device.
+
+        The reader and writer are always cleared, even when closing a broken connection fails, so the next request reconnects.
+        """
         if self.writer:
-            self.writer.close()
-            await self.writer.wait_closed()
-            self.reader = None
-            self.writer = None
+            try:
+                self.writer.close()
+                await self.writer.wait_closed()
+            except (OSError, serialx.SerialException) as exception:
+                _LOGGER.debug("Error while closing connection: %s", exception)
+            finally:
+                self.reader = None
+                self.writer = None
 
     @classmethod
     def _crc_1021(cls, message: tuple[int, ...]) -> int:
@@ -83,8 +90,12 @@ class Kamstrup:
             raise RuntimeError(msg)
         bytearray_data = bytearray(data)
         self._debug("Write", bytearray_data)
-        self.writer.write(bytearray_data)
-        await self.writer.drain()
+        try:
+            self.writer.write(bytearray_data)
+            await self.writer.drain()
+        except OSError, serialx.SerialException:
+            await self.disconnect()
+            raise
 
     async def _read(self) -> int | None:
         """Read directly from the meter."""
@@ -94,15 +105,22 @@ class Kamstrup:
             raise RuntimeError(msg)
         try:
             data = await asyncio.wait_for(self.reader.read(1), timeout=self.timeout)
-            if len(data) == 0:
-                _LOGGER.debug("Rx Timeout")
-                return None
-            bytearray_data = bytearray(data)
-            self._debug("Read", bytearray(bytearray_data))
-            return bytearray_data[0]
         except TimeoutError:
             _LOGGER.debug("Rx Timeout")
             return None
+        except OSError, serialx.SerialException:
+            await self.disconnect()
+            raise
+
+        if len(data) == 0:
+            # An empty read means EOF, the other end (e.g. a serial-over-TCP bridge) closed the connection.
+            await self.disconnect()
+            msg = "Connection closed by peer"
+            raise ConnectionError(msg)
+
+        bytearray_data = bytearray(data)
+        self._debug("Read", bytearray(bytearray_data))
+        return bytearray_data[0]
 
     async def _send(self, pfx: int, message: tuple[int, ...]) -> None:
         """Construct the message and send to the meter."""

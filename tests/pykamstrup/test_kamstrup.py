@@ -1,7 +1,7 @@
 """Tests for Kamstrup class."""
 
 import math
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 
@@ -91,6 +91,21 @@ async def test_disconnect() -> None:
     assert kamstrup.writer is None
 
 
+async def test_disconnect_close_error() -> None:
+    """Test disconnect clears the connection even when closing a broken connection raises."""
+    mock_writer = AsyncMock(close=Mock())
+    mock_writer.wait_closed.side_effect = ConnectionResetError(104, "Connection reset by peer")
+
+    kamstrup = Kamstrup("test_url", 9600, 1.0)
+    kamstrup.writer = mock_writer
+    kamstrup.reader = AsyncMock()
+
+    await kamstrup.disconnect()
+
+    assert kamstrup.reader is None
+    assert kamstrup.writer is None
+
+
 async def test_write() -> None:
     """Test writing data."""
     mock_writer = AsyncMock()
@@ -105,6 +120,35 @@ async def test_write() -> None:
 
     mock_writer.write.assert_called_once_with(bytearray([0x01, 0x02, 0x03]))
     mock_writer.drain.assert_called_once()
+
+
+async def test_write_connection_reset() -> None:
+    """Test a connection reset while writing disconnects and is raised, so the next write reconnects."""
+    broken_writer = AsyncMock()
+    broken_writer.write = Mock()
+    broken_writer.close = Mock()
+    broken_writer.drain.side_effect = ConnectionResetError(104, "Connection reset by peer")
+    broken_writer.wait_closed.side_effect = ConnectionResetError(104, "Connection reset by peer")
+
+    kamstrup = Kamstrup("test_url", 9600, 1.0)
+    kamstrup.writer = broken_writer
+    kamstrup.reader = AsyncMock()
+
+    with pytest.raises(ConnectionResetError):
+        await kamstrup._write((0x01,))  # pylint: disable=protected-access
+
+    assert kamstrup.reader is None
+    assert kamstrup.writer is None
+
+    with patch("custom_components.kamstrup_403.pykamstrup.kamstrup.serialx.open_serial_connection") as mock_open:
+        new_writer = AsyncMock()
+        new_writer.write = Mock()
+        mock_open.return_value = (AsyncMock(), new_writer)
+
+        await kamstrup._write((0x02,))  # pylint: disable=protected-access
+
+        mock_open.assert_called_once_with(url="test_url", baudrate=9600)
+        new_writer.write.assert_called_once_with(bytearray([0x02]))
 
 
 async def test_write_no_writer() -> None:
@@ -199,32 +243,39 @@ async def test_read_no_reader() -> None:
 
 
 async def test_read_empty_data() -> None:
-    """Test reading empty data."""
+    """Test an empty read (EOF) is treated as a closed connection and disconnects."""
     mock_reader = AsyncMock()
-    mock_reader.read.return_value = b""  # Empty data
+    mock_reader.read.return_value = b""  # EOF
+    mock_writer = AsyncMock()
+    mock_writer.close = Mock()
 
     kamstrup = Kamstrup("test_url", 9600, 1.0)
     kamstrup.reader = mock_reader
-    kamstrup.writer = AsyncMock()  # Needed for _ensure_connected
+    kamstrup.writer = mock_writer
 
-    result = await kamstrup._read()  # pylint: disable=protected-access
+    with pytest.raises(ConnectionError, match="Connection closed by peer"):
+        await kamstrup._read()  # pylint: disable=protected-access
 
-    assert result is None
     mock_reader.read.assert_called_once_with(1)
+    mock_writer.close.assert_called_once()
+    assert kamstrup.reader is None
+    assert kamstrup.writer is None
 
 
-async def test_read_timeout() -> None:
-    """Test read timeout."""
+async def test_read_connection_error() -> None:
+    """Test a connection error while reading disconnects and is raised."""
     mock_reader = AsyncMock()
-    mock_reader.read.return_value = b""
+    mock_reader.read.side_effect = ConnectionResetError(104, "Connection reset by peer")
 
     kamstrup = Kamstrup("test_url", 9600, 1.0)
     kamstrup.reader = mock_reader
-    kamstrup.writer = AsyncMock()  # Needed for _ensure_connected
+    kamstrup.writer = AsyncMock(close=Mock())
 
-    result = await kamstrup._read()  # pylint: disable=protected-access
+    with pytest.raises(ConnectionResetError):
+        await kamstrup._read()  # pylint: disable=protected-access
 
-    assert result is None
+    assert kamstrup.reader is None
+    assert kamstrup.writer is None
 
 
 async def test_read_asyncio_timeout_error() -> None:
@@ -309,7 +360,7 @@ async def test_receive_success() -> None:
 async def test_receive_timeout() -> None:
     """Test receive timeout."""
     mock_reader = AsyncMock()
-    mock_reader.read.return_value = b""
+    mock_reader.read.side_effect = TimeoutError()
 
     kamstrup = Kamstrup("test_url", 9600, 1.0)
     kamstrup.reader = mock_reader
