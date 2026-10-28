@@ -77,7 +77,7 @@ async def test_connect_already_connected() -> None:
 
 async def test_disconnect() -> None:
     """Test disconnection method."""
-    mock_writer = AsyncMock()
+    mock_writer = AsyncMock(close=Mock())
 
     kamstrup = Kamstrup("test_url", 9600, 1.0)
     kamstrup.writer = mock_writer
@@ -108,7 +108,7 @@ async def test_disconnect_close_error() -> None:
 
 async def test_write() -> None:
     """Test writing data."""
-    mock_writer = AsyncMock()
+    mock_writer = AsyncMock(write=Mock())
 
     kamstrup = Kamstrup("test_url", 9600, 1.0)
     kamstrup.writer = mock_writer
@@ -124,9 +124,7 @@ async def test_write() -> None:
 
 async def test_write_connection_reset() -> None:
     """Test a connection reset while writing disconnects and is raised, so the next write reconnects."""
-    broken_writer = AsyncMock()
-    broken_writer.write = Mock()
-    broken_writer.close = Mock()
+    broken_writer = AsyncMock(write=Mock(), close=Mock())
     broken_writer.drain.side_effect = ConnectionResetError(104, "Connection reset by peer")
     broken_writer.wait_closed.side_effect = ConnectionResetError(104, "Connection reset by peer")
 
@@ -141,8 +139,7 @@ async def test_write_connection_reset() -> None:
     assert kamstrup.writer is None
 
     with patch("custom_components.kamstrup_403.pykamstrup.kamstrup.serialx.open_serial_connection") as mock_open:
-        new_writer = AsyncMock()
-        new_writer.write = Mock()
+        new_writer = AsyncMock(write=Mock())
         mock_open.return_value = (AsyncMock(), new_writer)
 
         await kamstrup._write((0x02,))  # pylint: disable=protected-access
@@ -246,8 +243,7 @@ async def test_read_empty_data() -> None:
     """Test an empty read (EOF) is treated as a closed connection and disconnects."""
     mock_reader = AsyncMock()
     mock_reader.read.return_value = b""  # EOF
-    mock_writer = AsyncMock()
-    mock_writer.close = Mock()
+    mock_writer = AsyncMock(close=Mock())
 
     kamstrup = Kamstrup("test_url", 9600, 1.0)
     kamstrup.reader = mock_reader
@@ -294,7 +290,7 @@ async def test_read_asyncio_timeout_error() -> None:
 
 async def test_send_without_escapes() -> None:
     """Test sending data without escape characters."""
-    mock_writer = AsyncMock()
+    mock_writer = AsyncMock(write=Mock())
 
     kamstrup = Kamstrup("test_url", 9600, 1.0)
     kamstrup.writer = mock_writer
@@ -315,7 +311,7 @@ async def test_send_without_escapes() -> None:
 
 async def test_send_with_escapes() -> None:
     """Test sending data with escape characters."""
-    mock_writer = AsyncMock()
+    mock_writer = AsyncMock(write=Mock())
 
     kamstrup = Kamstrup("test_url", 9600, 1.0)
     kamstrup.writer = mock_writer
