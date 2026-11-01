@@ -167,6 +167,32 @@ async def test_async_update_data_serial_exception(coordinator: KamstrupUpdateCoo
     mock_kamstrup.get_values.assert_called_once_with(commands)
 
 
+async def test_async_update_data_connection_reset(coordinator: KamstrupUpdateCoordinator, mock_kamstrup: Mock) -> None:
+    """Test a connection reset fails the update without retrying each command, and a later update recovers.
+
+    See https://github.com/golles/ha-kamstrup_403/issues/188.
+    """
+    commands = [60, 68]
+    for command in commands:
+        coordinator.register_command(command)
+
+    mock_kamstrup.get_values.side_effect = ConnectionResetError(104, "Connection reset by peer")
+
+    with pytest.raises(UpdateFailed):
+        await coordinator._async_update_data()  # pylint: disable=protected-access
+
+    # No individual retries on a broken connection.
+    mock_kamstrup.get_values.assert_called_once_with(commands)
+
+    # The next update (after the client reconnected) works again.
+    mock_kamstrup.get_values.side_effect = None
+    mock_kamstrup.get_values.return_value = {60: (1234.0, "GJ"), 68: (5678.0, "m³")}
+
+    result = await coordinator._async_update_data()  # pylint: disable=protected-access
+
+    assert result == {60: {"value": 1234.0, "unit": "GJ"}, 68: {"value": 5678.0, "unit": "m³"}}
+
+
 async def test_async_update_data_general_exception(coordinator: KamstrupUpdateCoordinator, mock_kamstrup: Mock) -> None:
     """Test a general exception falls back to individual reads instead of failing the whole update."""
     commands = [60, 68]
