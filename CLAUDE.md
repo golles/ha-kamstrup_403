@@ -70,7 +70,7 @@ A standalone KMP serial protocol implementation (`kamstrup.py`). This was revers
 
 - **`conftest.py`** — Key fixtures: `mock_kamstrup` (patches `Kamstrup` class with `AsyncMock`), `enable_all_entities` (overrides `entity_registry_enabled_default` so all sensors are active in tests), `auto_enable_custom_integrations`.
 - **`__init__.py`** — Helper `setup_integration(hass, config_entry)` used in most test files to bootstrap the integration.
-- Tests are fully async (`asyncio_mode = "auto"` via pytest-asyncio). The `pytest-homeassistant-custom-component` package provides HA test infrastructure (`hass` fixture, etc.).
+- Tests are fully async (`asyncio_mode = "auto"` via pytest-asyncio). The `pytest-homeassistant` package provides HA test infrastructure (`hass` fixture, etc.).
 
 ## Code Standards
 
